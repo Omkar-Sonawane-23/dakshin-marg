@@ -78,6 +78,7 @@ export default function AntarcticMap() {
   const [view, setView] = useState<MapView>({ cx: 0, cy: 0, scale: 0.32 });
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [viewMode, setViewMode] = useState<'3D' | '2D'>('3D');
   const dragRef = useRef<{ sx: number; sy: number; cx: number; cy: number } | null>(null);
   const fitted = useRef(false);
   const staticPaths = useStaticPaths();
@@ -1056,7 +1057,7 @@ export default function AntarcticMap() {
   return (
     <div
       ref={wrapRef}
-      className={`relative h-full w-full overflow-hidden select-none ${dragging ? 'map-grabbing' : 'map-grab'}`}
+      className={`nav-scene relative h-full w-full overflow-hidden select-none ${viewMode === '3D' ? 'nav-scene-3d' : ''} ${dragging ? 'map-grabbing' : 'map-grab'}`}
       style={{ background: 'radial-gradient(120% 90% at 50% 10%, var(--map-bg-0) 0%, var(--map-bg-1) 45%, var(--map-bg-2) 100%)' }}
       onWheel={onWheel}
       onPointerDown={onPointerDown}
@@ -1119,7 +1120,15 @@ export default function AntarcticMap() {
         {liveMarkers}
       </svg>
 
-      {/* map furniture */}
+      {/* spatial navigation furniture */}
+      <div className="nav-instrument-bar absolute top-3 right-3 z-10 flex items-center gap-1" onPointerDown={(e) => e.stopPropagation()}>
+        <button className={`nav-mode-btn ${viewMode === '3D' ? 'active' : ''}`} onClick={() => setViewMode('3D')} aria-pressed={viewMode === '3D'}>3D PERSPECTIVE</button>
+        <button className={`nav-mode-btn ${viewMode === '2D' ? 'active' : ''}`} onClick={() => setViewMode('2D')} aria-pressed={viewMode === '2D'}>2D POLAR</button>
+        <span className="nav-divider" />
+        <span className="nav-compass" aria-label="North up">N</span>
+        <span className="nav-readout">NORTH UP · HUMAN REVIEW</span>
+      </div>
+      <div className="nav-depth-grid" aria-hidden="true" />
       {live && cursorProbe && !dragging && (
         <div className="absolute bottom-8 right-14 pointer-events-none font-data text-[9px] text-ink-dim bg-panel/85 border border-line rounded-sm px-2 py-1">
           {cursorProbe}

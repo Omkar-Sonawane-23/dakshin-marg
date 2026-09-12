@@ -1,0 +1,388 @@
+@import "tailwindcss";
+
+/* ═══ THEME TOKENS ═══════════════════════════════════════════════════
+   One design system, two themes. Dark is the default (mission-control
+   night palette); light overrides the SAME custom properties under
+   [data-theme="light"] — Tailwind v4 utilities compile to var() refs,
+   so every utility class re-themes at runtime. Never fork components
+   per theme; only tokens change. */
+
+@theme {
+  --color-abyss: #04090f;
+  --color-deep: #071120;
+  --color-panel: #0a1626;
+  --color-panel-2: #0d1c30;
+  --color-line: #16283e;
+  --color-line-2: #1f394e;
+  --color-ink: #dbe7f4;
+  --color-ink-dim: #8aa2bc;
+  --color-ink-faint: #5a7188;
+  --color-ice: #eaf6ff;
+  --color-accent: #46cfe4;
+  --color-accent-dim: #2b93a6;
+  --color-risk-low: #3ddc97;
+  --color-risk-med: #f2c94c;
+  --color-risk-high: #ff9046;
+  --color-risk-crit: #ff4d5e;
+}
+
+:root {
+  color-scheme: dark;
+  --font-data: "SFMono-Regular", "Cascadia Mono", "JetBrains Mono", Consolas, "Liberation Mono", monospace;
+  --font-ui: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  /* semantic component tokens (dark defaults) */
+  --color-model: #b48cff;          /* MODEL·FORECAST violet */
+  --color-sim: #d9a94a;            /* SIMULATED amber */
+  --btn-ink: #b9cde2;
+  --btn-bg: rgba(21, 38, 58, 0.8);
+  --btn-line: #24405e;
+  --btn-hover-bg: #1b3350;
+  --btn-hover-line: #2f5478;
+  --accent-contrast: #04121a;      /* text on accent-filled buttons */
+  --panel-grad-a: rgba(13, 26, 42, 0.92);
+  --panel-grad-b: rgba(8, 17, 30, 0.94);
+  --panel-inset-bg: rgba(4, 10, 18, 0.55);
+  --panel-inset-line: #122238;
+  --tooltip-bg: rgba(6, 14, 24, 0.94);
+  --scrollbar: #1c3048;
+  --scrollbar-hover: #2a4460;
+  --skeleton-a: #0e1c2e;
+  --skeleton-b: #16283e;
+  --focus-ring: rgba(70, 207, 228, 0.5);
+  --toggle-knob: #8aa2bc;
+  --shadow-strong: rgba(0, 0, 0, 0.55);
+
+  /* map structural tokens */
+  --map-land: #16324c;
+  --map-land-line: #2c5578;
+  --map-shelf: #12283f;
+  --map-shelf-line: #1f3f5e;
+  --map-graticule: #12243a;
+  --map-graticule-label: #3d5570;
+  --map-label: #8aa2bc;
+  --map-strong: #eaf6ff;           /* vessel name, high-emphasis map text */
+  --map-marker-core: #04121a;      /* dark centre of track dots */
+  --map-traj: #7fb0d4;             /* berg trajectory (non-threat) */
+  --map-berg: #bfe3ff;             /* berg marker */
+  --map-crit-soft: #ffb9c0;        /* soft critical caption on map */
+  --map-plate: rgba(6, 14, 24, 0.88);  /* label plate behind map callouts */
+  --map-bg-0: #0a1830;             /* ocean radial gradient */
+  --map-bg-1: #060f1c;
+  --map-bg-2: #04090f;
+  --legend-ice-0: rgba(96, 150, 200, 0.12);   /* sea-ice legend swatch */
+  --legend-ice-1: rgba(180, 215, 245, 0.55);
+  --legend-ice-2: rgba(236, 246, 255, 0.8);
+
+  /* route palette (LIVE optimizer + drill) */
+  --route-direct: #46cfe4;
+  --route-balanced: #3ddc97;
+  --route-conservative: #9db8d4;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* core scale — intentionally designed, not inverted */
+  --color-abyss: #e9eff6;
+  --color-deep: #dfe8f1;
+  --color-panel: #f6f9fc;
+  --color-panel-2: #eaf1f8;
+  --color-line: #c6d5e3;
+  --color-line-2: #aec3d6;
+  --color-ink: #1c3048;
+  --color-ink-dim: #46617c;
+  --color-ink-faint: #5d768d;
+  --color-ice: #0a1c30;
+  --color-accent: #086b81;
+  --color-accent-dim: #075a6d;
+
+  /* risk text-grade colors darkened for WCAG contrast on light panels;
+     hue meaning (green/amber/orange/red) is preserved */
+  --color-risk-low: #0a7a4f;
+  --color-risk-med: #7e6008;
+  --color-risk-high: #bc5310;
+  --color-risk-crit: #d21f33;
+
+  --color-model: #6d3fd4;
+  --color-sim: #8a6414;
+  --btn-ink: #33506c;
+  --btn-bg: rgba(214, 227, 239, 0.85);
+  --btn-line: #b3c7da;
+  --btn-hover-bg: #d3e2ef;
+  --btn-hover-line: #8fadc8;
+  --accent-contrast: #f4fbfd;
+  --panel-grad-a: rgba(248, 251, 254, 0.94);
+  --panel-grad-b: rgba(236, 243, 250, 0.96);
+  --panel-inset-bg: rgba(217, 229, 240, 0.5);
+  --panel-inset-line: #ccdae7;
+  --tooltip-bg: rgba(250, 253, 255, 0.97);
+  --scrollbar: #b7c9da;
+  --scrollbar-hover: #9cb4ca;
+  --skeleton-a: #dde7f0;
+  --skeleton-b: #cbd9e6;
+  --focus-ring: rgba(8, 107, 129, 0.45);
+  --toggle-knob: #5f7994;
+  --shadow-strong: rgba(30, 55, 80, 0.25);
+
+  --map-land: #c2d2e0;
+  --map-land-line: #93acc4;
+  --map-shelf: #d4e0ea;
+  --map-shelf-line: #a9bfd2;
+  --map-graticule: #c3d4e2;
+  --map-graticule-label: #7d95ab;
+  --map-label: #46617c;
+  --map-strong: #10233a;
+  --map-marker-core: #f2f7fb;
+  --map-traj: #3c6a92;
+  --map-berg: #23557e;
+  --map-crit-soft: #a3182b;
+  --map-plate: rgba(249, 252, 255, 0.92);
+  --map-bg-0: #c9daea;
+  --map-bg-1: #d8e5f0;
+  --map-bg-2: #e2ebf4;
+  --legend-ice-0: rgba(168, 205, 232, 0.2);
+  --legend-ice-1: rgba(118, 163, 201, 0.55);
+  --legend-ice-2: rgba(52, 104, 154, 0.78);
+
+  --route-direct: #086b81;
+  --route-balanced: #0a7a4f;
+  --route-conservative: #55718c;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  background: var(--color-abyss);
+  color: var(--color-ink);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* subtle, not disorienting: only surface colors transition on theme switch */
+body, .panel, .panel-inset, .btn, .tooltip, .badge {
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* ── scrollbars ─────────────────────────────────────────────── */
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 4px; }
+*::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
+
+/* ── typography helpers ─────────────────────────────────────── */
+.font-data { font-family: var(--font-data); }
+.label-xs {
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  font-weight: 600;
+}
+.value-lg { font-family: var(--font-data); font-size: 17px; color: var(--color-ice); }
+
+/* ── panel chrome ───────────────────────────────────────────── */
+.panel {
+  background: linear-gradient(180deg, var(--panel-grad-a), var(--panel-grad-b));
+  border: 1px solid var(--color-line);
+  backdrop-filter: blur(10px);
+}
+.panel-inset { background: var(--panel-inset-bg); border: 1px solid var(--panel-inset-line); }
+
+.hairline { height: 1px; background: linear-gradient(90deg, transparent, var(--color-line-2) 30%, var(--color-line-2) 70%, transparent); }
+
+/* ── risk colors ────────────────────────────────────────────── */
+.risk-LOW      { color: var(--color-risk-low); }
+.risk-MEDIUM   { color: var(--color-risk-med); }
+.risk-HIGH     { color: var(--color-risk-high); }
+.risk-CRITICAL { color: var(--color-risk-crit); }
+.bg-risk-LOW      { background: var(--color-risk-low); }
+.bg-risk-MEDIUM   { background: var(--color-risk-med); }
+.bg-risk-HIGH     { background: var(--color-risk-high); }
+.bg-risk-CRITICAL { background: var(--color-risk-crit); }
+
+/* ── buttons ────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--btn-ink);
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-line);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 120ms, border-color 120ms, color 120ms, box-shadow 120ms;
+  user-select: none;
+}
+.btn:hover { background: var(--btn-hover-bg); border-color: var(--btn-hover-line); color: var(--color-ice); }
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--focus-ring); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-accent {
+  color: var(--accent-contrast);
+  background: linear-gradient(180deg, var(--color-accent), var(--color-accent-dim));
+  border-color: var(--color-accent);
+}
+.btn-accent:hover { filter: brightness(1.12); color: var(--accent-contrast); border-color: var(--color-accent); background: linear-gradient(180deg, var(--color-accent), var(--color-accent-dim)); }
+.btn-ghost { background: transparent; border-color: transparent; }
+.btn-ghost:hover { background: color-mix(in srgb, var(--btn-hover-bg) 60%, transparent); border-color: transparent; }
+.btn-danger { color: var(--color-risk-crit); background: color-mix(in srgb, var(--color-risk-crit) 12%, transparent); border-color: color-mix(in srgb, var(--color-risk-crit) 45%, transparent); }
+.btn-danger:hover { background: color-mix(in srgb, var(--color-risk-crit) 20%, transparent); border-color: color-mix(in srgb, var(--color-risk-crit) 65%, transparent); }
+
+/* ── badges ─────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 7px;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  border-radius: 2px;
+  border: 1px solid;
+}
+.badge-sim { color: var(--color-sim); border-color: color-mix(in srgb, var(--color-sim) 45%, transparent); background: color-mix(in srgb, var(--color-sim) 8%, transparent); }
+.badge-live { color: var(--color-accent); border-color: color-mix(in srgb, var(--color-accent) 40%, transparent); background: color-mix(in srgb, var(--color-accent) 7%, transparent); }
+
+/* DEMO / LIVE mode tabs (TopBar) */
+.mode-tab-demo { color: var(--color-sim); background: color-mix(in srgb, var(--color-sim) 15%, transparent); }
+.mode-tab-live { color: var(--color-risk-low); background: color-mix(in srgb, var(--color-risk-low) 14%, transparent); }
+
+/* ── animations ─────────────────────────────────────────────── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+.pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+@keyframes sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.slide-in-right { animation: slide-in-right 220ms cubic-bezier(0.16, 1, 0.3, 1); }
+
+@keyframes slide-up {
+  from { transform: translateY(14px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.slide-up { animation: slide-up 200ms cubic-bezier(0.16, 1, 0.3, 1); }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.fade-in { animation: fade-in 250ms ease-out; }
+
+@keyframes alert-flash {
+  0% { background: color-mix(in srgb, var(--color-risk-crit) 22%, transparent); }
+  100% { background: transparent; }
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+.skeleton {
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--skeleton-a) 25%, var(--skeleton-b) 50%, var(--skeleton-a) 75%);
+  background-size: 400px 100%;
+  animation: skeleton-shimmer 1.4s infinite linear;
+}
+
+@keyframes berg-ping {
+  0% { r: 6; opacity: 0.8; }
+  100% { r: 22; opacity: 0; }
+}
+
+/* vessel course dash flow */
+@keyframes dash-flow { to { stroke-dashoffset: -20; } }
+.route-active-dash { animation: dash-flow 1.6s linear infinite; }
+
+/* ── re-planning drill ─────────────────────────────────────── */
+/* old route fades + strikes to danger red when superseded */
+@keyframes drill-old-route {
+  0% { opacity: 1; }
+  100% { opacity: 0.45; }
+}
+.drill-old-route { animation: drill-old-route 900ms ease-out forwards; }
+
+/* new route draws itself in (pathLength normalized to 1 in JSX) */
+@keyframes drill-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.drill-draw-route {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: drill-draw 2.2s ease-in-out forwards;
+}
+
+/* simulated berg deviation ping */
+@keyframes drill-berg-ping {
+  0% { opacity: 0.9; transform: scale(0.4); }
+  100% { opacity: 0; transform: scale(2.6); }
+}
+.drill-berg-ping {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: drill-berg-ping 1.8s ease-out infinite;
+}
+
+/* alert banner pulse */
+@keyframes drill-alert-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-risk-crit) 45%, transparent); }
+  50% { box-shadow: 0 0 18px 2px color-mix(in srgb, var(--color-risk-crit) 65%, transparent); }
+}
+.drill-alert { animation: drill-alert-pulse 1.6s ease-in-out infinite; }
+
+/* map cursor */
+.map-grab { cursor: grab; }
+.map-grabbing { cursor: grabbing; }
+
+/* focus ring for map objects */
+.map-focusable:focus-visible { outline: none; }
+
+/* tooltip */
+.tooltip {
+  pointer-events: none;
+  background: var(--tooltip-bg);
+  border: 1px solid var(--btn-line);
+  box-shadow: 0 6px 24px var(--shadow-strong);
+  border-radius: 3px;
+  padding: 7px 10px;
+  font-size: 11px;
+  max-width: 260px;
+}
+
+/* toggle switch */
+.toggle {
+  position: relative; width: 26px; height: 14px; border-radius: 8px;
+  background: var(--color-line); border: 1px solid var(--btn-line); cursor: pointer;
+  transition: background 140ms, border-color 140ms;
+  flex: none;
+}
+.toggle[data-on="true"] { background: color-mix(in srgb, var(--color-accent) 30%, transparent); border-color: var(--color-accent); }
+.toggle::after {
+  content: ""; position: absolute; top: 1px; left: 1px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--toggle-knob); transition: transform 140ms, background 140ms;
+}
+.toggle[data-on="true"]::after { transform: translateX(12px); background: var(--color-accent); }
+.toggle:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--focus-ring); }
+
+/* range slider (time control) */
+input[type="range"].timeline {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--color-accent) var(--fill, 0%), var(--color-line) var(--fill, 0%));
+  outline: none;
+}
+input[type="range"].timeline::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--color-ice); border: 3px solid var(--color-accent);
+  cursor: pointer;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--color-accent) 60%, transparent);
+  transition: transform 120ms;
+}
+input[type="range"].timeline::-webkit-slider-thumb:hover { transform: scale(1.15); }
+input[type="range"].timeline:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px var(--focus-ring); }

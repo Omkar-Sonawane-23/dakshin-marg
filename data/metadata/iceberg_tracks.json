@@ -1,0 +1,13 @@
+{
+  "sourceId": "icebergs_byu",
+  "provenance": "REAL_OBSERVATION",
+  "ingestedAt": "2026-09-02T15:47:55Z",
+  "bergs": 17,
+  "totalObs": 7738,
+  "skipped": {
+    "tooShort": 600,
+    "outsideAOI": 30
+  },
+  "windowStart": "2023-09-03",
+  "processingStatus": "normalized"
+}

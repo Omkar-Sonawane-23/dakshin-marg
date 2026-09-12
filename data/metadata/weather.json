@@ -1,0 +1,11 @@
+{
+  "sourceId": "weather_openmeteo",
+  "ingestedAt": "2026-09-02T15:19:26Z",
+  "quality": "ok",
+  "warnings": [],
+  "hours": 264,
+  "cells": 84,
+  "nowHour": "2026-09-02T15:00",
+  "provenanceRule": "hour < nowHour \u2192 REAL_HISTORICAL else REAL_FORECAST",
+  "processingStatus": "normalized"
+}

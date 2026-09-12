@@ -73,6 +73,10 @@
   --legend-ice-0: rgba(96, 150, 200, 0.12);   /* sea-ice legend swatch */
   --legend-ice-1: rgba(180, 215, 245, 0.55);
   --legend-ice-2: rgba(236, 246, 255, 0.8);
+  /* terrain legend swatch — mirrors map3d/palette.ts DARK.shelf/coastline/iceThick */
+  --legend-shelf: #9fd0ea;
+  --legend-coast: #63b6d8;
+  --legend-plateau: #e8f6ff;
 
   /* route palette (LIVE optimizer + drill) */
   --route-direct: #46cfe4;
@@ -144,6 +148,9 @@
   --legend-ice-0: rgba(168, 205, 232, 0.2);
   --legend-ice-1: rgba(118, 163, 201, 0.55);
   --legend-ice-2: rgba(52, 104, 154, 0.78);
+  --legend-shelf: #cfe6f4;
+  --legend-coast: #4a7fa0;
+  --legend-plateau: #7fa8bd;
 
   --route-direct: #086b81;
   --route-balanced: #0a7a4f;

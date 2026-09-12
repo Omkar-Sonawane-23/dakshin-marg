@@ -1,13 +1,95 @@
-/* Reference-inspired composition: map is the hero, controls float above it. */
-.dss-stage { position:relative; overflow:hidden; }
-.dss-map-stage { position:absolute; inset:0; width:100%; }
-.dss-left-rail, .dss-right-rail { position:absolute; top:18px; bottom:18px; z-index:12; width:292px !important; border:1px solid rgba(135,190,220,.24); border-radius:14px; overflow:hidden; background:linear-gradient(180deg,rgba(7,24,42,.88),rgba(3,14,27,.86)); box-shadow:0 18px 45px rgba(0,0,0,.32), inset 0 1px rgba(255,255,255,.08); }
-.dss-left-rail { left:10px; border-left:0; }
-.dss-right-rail { right:10px; border-right:0; }
-.dss-left-rail > div, .dss-right-rail > div { width:100% !important; }
-.dss-stage > button { z-index:20; background:rgba(5,20,36,.9); border-color:rgba(117,187,220,.35); }
-header { height:64px !important; padding-inline:28px !important; background:linear-gradient(90deg,rgba(5,22,39,.98),rgba(9,29,49,.92)) !important; box-shadow:0 5px 24px rgba(0,0,0,.28); }
-header .font-data.font-bold { letter-spacing:.04em; font-family:var(--font-ui); font-size:16px !important; }
-header .label-xs { letter-spacing:.04em; }
-@media (max-width: 1100px) { .dss-right-rail { width:270px !important; } .dss-left-rail { width:260px !important; } }
-@media (max-width: 700px) { .dss-left-rail,.dss-right-rail { top:auto; bottom:8px; height:210px; width:calc(100% - 16px) !important; left:8px; right:8px; border-radius:14px; } .dss-left-rail { display:none !important; } header { padding-inline:12px !important; height:56px !important; } }
+/* ═══════════════════════════════════════════════════════════════════════
+   Composition — the map is the hero, everything else floats above it.
+
+   The stage is a single full-bleed surface; the navigation rail and both
+   information rails are glass panels anchored over it, so the 3D environment
+   always reads as the primary object and the panels as instruments on top.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dss-stage { position: relative; overflow: hidden; }
+.dss-map-stage { position: absolute; inset: 0; width: 100%; }
+
+.dss-left-rail,
+.dss-right-rail {
+  position: absolute;
+  top: 12px; bottom: 12px;
+  z-index: 13;
+  width: 292px !important;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 16%, transparent);
+  border-radius: 14px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-panel) 82%, transparent),
+    color-mix(in srgb, var(--color-abyss) 88%, transparent));
+  backdrop-filter: blur(22px) saturate(1.12);
+  -webkit-backdrop-filter: blur(22px) saturate(1.12);
+  box-shadow:
+    0 22px 50px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 color-mix(in srgb, var(--color-ice) 7%, transparent);
+}
+.dss-left-rail { left: 74px; }
+.dss-right-rail { right: 12px; }
+.dss-left-rail > div,
+.dss-right-rail > div { width: 100% !important; height: 100%; overflow-y: auto; }
+
+/* collapse tabs pick up the same glass treatment */
+.dss-rail-tab {
+  background: color-mix(in srgb, var(--color-panel) 86%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 26%, transparent);
+  color: var(--color-ink-faint);
+  cursor: pointer;
+  transition: color 130ms, border-color 130ms;
+}
+.dss-rail-tab:hover { color: var(--color-accent); border-color: color-mix(in srgb, var(--color-accent) 55%, transparent); }
+
+/* settings popover, anchored to the rail */
+.nav-settings {
+  position: absolute; left: 56px; bottom: 0;
+  width: 236px;
+  padding: 12px;
+  z-index: 30;
+}
+
+/* header — a lit instrument strip rather than a flat bar */
+header {
+  height: 62px !important;
+  padding-inline: 24px !important;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--color-deep) 96%, transparent),
+    color-mix(in srgb, var(--color-panel) 92%, transparent)) !important;
+  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.3);
+  border-bottom-color: color-mix(in srgb, var(--color-accent) 14%, transparent) !important;
+}
+header .font-data.font-bold { letter-spacing: 0.04em; font-family: var(--font-ui); font-size: 16px !important; }
+header .label-xs { letter-spacing: 0.04em; }
+
+/* ── tablet ──────────────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .dss-right-rail { width: 272px !important; }
+  .dss-left-rail { width: 262px !important; }
+  header { padding-inline: 16px !important; }
+}
+
+/* ── mobile: the chart stays primary, panels become bottom sheets ────── */
+@media (max-width: 700px) {
+  header { padding-inline: 12px !important; height: 56px !important; }
+
+  .dss-left-rail,
+  .dss-right-rail {
+    top: auto;
+    bottom: 62px;
+    left: 8px; right: 8px;
+    width: auto !important;
+    height: 46vh;
+    max-height: 340px;
+    border-radius: 16px 16px 12px 12px;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45);
+  }
+  /* the left rail duplicates mission content on a phone — one sheet is enough */
+  .dss-left-rail { display: none !important; }
+  .dss-rail-tab { display: none !important; }
+
+  .nav-settings { left: auto; right: 0; bottom: 54px; width: min(280px, 86vw); }
+}

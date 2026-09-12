@@ -1,0 +1,25 @@
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Dependencies
+# (backend/node_modules is already tracked in this repo; this only stops
+#  *new* dependency trees from being committed.)
+node_modules/
+
+# Environment / secrets
+.env
+.env.local
+*.local
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/

@@ -1,14 +1,276 @@
-/* Premium spatial navigation treatment layered over the existing map renderer. */
-.nav-scene { isolation: isolate; perspective: 1400px; }
-.nav-scene::before { content:""; position:absolute; inset:0; pointer-events:none; z-index:1; background: radial-gradient(ellipse at 50% 45%, transparent 38%, rgba(0,8,18,.28) 100%), linear-gradient(180deg, rgba(102,190,224,.06), transparent 28%); mix-blend-mode:screen; }
-.nav-scene::after { content:""; position:absolute; inset:0; pointer-events:none; z-index:2; opacity:.22; background-image: linear-gradient(rgba(102,190,224,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(102,190,224,.12) 1px,transparent 1px); background-size: 80px 80px; mask-image: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent); }
-.nav-scene-3d > svg { filter: drop-shadow(0 18px 28px rgba(0,0,0,.18)); }
-.nav-depth-grid { position:absolute; z-index:3; inset:8% 20% 10%; pointer-events:none; border:1px solid rgba(137,220,241,.08); border-radius:50%; transform:rotateX(62deg) rotateZ(-8deg); box-shadow:0 0 80px rgba(32,148,190,.08), inset 0 0 50px rgba(32,148,190,.06); }
-.nav-instrument-bar { padding:5px; border:1px solid rgba(122,190,220,.25); border-radius:8px; background:rgba(5,17,31,.72); backdrop-filter:blur(16px); box-shadow:0 10px 30px rgba(0,0,0,.28); }
-.nav-mode-btn { border:1px solid transparent; background:transparent; color:#7893aa; font:600 9px/1 var(--font-data); letter-spacing:.11em; padding:8px 9px; border-radius:4px; cursor:pointer; }
-.nav-mode-btn:hover,.nav-mode-btn.active { color:#dff8ff; border-color:rgba(70,207,228,.45); background:rgba(70,207,228,.13); box-shadow:inset 0 0 14px rgba(70,207,228,.08); }
-.nav-divider { width:1px; height:18px; background:#25455e; margin:0 3px; }
-.nav-compass { display:grid; place-items:center; width:22px; height:22px; border:1px solid #4ec9dc; border-radius:50%; color:#e6fbff; font:700 10px var(--font-data); box-shadow:0 0 12px rgba(70,207,228,.25); }
-.nav-readout { color:#6d879b; font:9px var(--font-data); letter-spacing:.08em; padding:0 5px; }
-.panel { box-shadow: 0 16px 36px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.035); border-radius:6px; }
-@media (max-width: 700px) { .nav-readout { display:none; } .nav-mode-btn { padding:8px 6px; font-size:8px; } .nav-instrument-bar { top:8px; right:8px; } }
+/* ═══════════════════════════════════════════════════════════════════════
+   POLARIS-X — spatial navigation chrome.
+
+   Everything in this file sits *on top of* the WebGL environment: instrument
+   pods, the glass rails, screen-space callouts and the mini chart. The palette
+   is inherited from the tokens in index.css, so the light/dark switch re-tints
+   the 3D scene and this chrome from the same source.
+
+   Rules the design holds to:
+     · panels are frosted glass with a hairline lit edge, never solid blocks;
+     · illumination is reserved for state — active control, selection,
+       warning — so a glowing thing always *means* something;
+     · nothing floats above the map that the operator cannot reach with one
+       hand, and nothing obscures the centre of the chart.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.nav-scene {
+  isolation: isolate;
+  /* a barely-there vignette sells the depth without touching the render */
+  background:
+    radial-gradient(120% 100% at 50% 42%, transparent 52%, rgba(0, 6, 14, 0.34) 100%),
+    var(--color-abyss);
+}
+.nav-scene canvas { display: block; }
+
+/* ── instrument pods ─────────────────────────────────────────────────── */
+.nav-instrument-bar,
+.nav-pod {
+  padding: 5px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 22%, transparent);
+  border-radius: 10px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-panel) 78%, transparent),
+    color-mix(in srgb, var(--color-abyss) 84%, transparent));
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 color-mix(in srgb, var(--color-ice) 8%, transparent);
+}
+.nav-instrument-bar { display: flex; align-items: center; gap: 2px; }
+
+.nav-mode-btn {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-ink-faint);
+  font: 600 9px/1 var(--font-data);
+  letter-spacing: 0.11em;
+  padding: 8px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 130ms, background 130ms, border-color 130ms, box-shadow 130ms;
+  white-space: nowrap;
+}
+.nav-mode-btn:hover { color: var(--color-ink); background: color-mix(in srgb, var(--color-accent) 8%, transparent); }
+.nav-mode-btn.active {
+  color: var(--color-ice);
+  border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  box-shadow: inset 0 0 16px color-mix(in srgb, var(--color-accent) 12%, transparent);
+}
+.nav-mode-btn:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--focus-ring); }
+
+.nav-divider { width: 1px; height: 18px; background: var(--color-line-2); margin: 0 4px; }
+
+/* compass — the needle is the live camera azimuth */
+.nav-compass {
+  position: relative;
+  display: grid; place-items: center;
+  width: 24px; height: 24px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 60%, transparent);
+  border-radius: 50%;
+  color: var(--color-ice);
+  font: 700 8px var(--font-data);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  flex: none;
+}
+.nav-compass::after {
+  content: "N";
+  position: absolute;
+  font: 700 8px var(--font-data);
+  color: var(--color-accent);
+}
+.nav-compass-needle {
+  position: absolute; inset: 2px;
+  transform-origin: 50% 50%;
+  transition: transform 120ms linear;
+}
+.nav-compass-needle::before {
+  content: "";
+  position: absolute; left: 50%; top: 1px;
+  width: 0; height: 0;
+  transform: translateX(-50%);
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 7px solid var(--color-risk-crit);
+}
+.nav-readout {
+  color: var(--color-ink-faint);
+  font: 9px var(--font-data);
+  letter-spacing: 0.08em;
+  padding: 0 6px;
+  white-space: nowrap;
+}
+
+/* square icon control inside a pod */
+.nav-ctl {
+  display: grid; place-items: center;
+  width: 30px; height: 28px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-ink-dim);
+  cursor: pointer;
+  transition: color 120ms, background 120ms, border-color 120ms;
+}
+.nav-ctl:hover:not(:disabled) {
+  color: var(--color-ice);
+  background: color-mix(in srgb, var(--color-accent) 13%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+.nav-ctl:disabled { opacity: 0.3; cursor: not-allowed; }
+.nav-ctl:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--focus-ring); }
+.nav-pod { display: flex; flex-direction: column; gap: 2px; }
+
+/* tilt slider */
+.nav-tilt {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 4px 2px 2px;
+  cursor: pointer;
+}
+.nav-tilt-label { font: 700 7px var(--font-data); letter-spacing: 0.12em; color: var(--color-ink-faint); }
+.nav-tilt input[type="range"] {
+  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 16px; height: 56px;
+  background: transparent;
+  cursor: ns-resize;
+  accent-color: var(--color-accent);
+}
+
+/* ── screen-space callouts ───────────────────────────────────────────── */
+.nav-label {
+  position: absolute; left: 0; top: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 2px 6px 3px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--color-abyss) 62%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid color-mix(in srgb, currentColor 32%, transparent);
+  will-change: transform, opacity;
+  transition: opacity 140ms ease;
+  white-space: nowrap;
+}
+.nav-label::after {
+  content: "";
+  position: absolute; left: 50%; bottom: -5px;
+  width: 1px; height: 5px;
+  background: color-mix(in srgb, currentColor 60%, transparent);
+}
+.nav-label-text { font: 700 9.5px/1.15 var(--font-data); letter-spacing: 0.08em; }
+.nav-label-sub { font: 8.5px/1.15 var(--font-data); color: var(--color-ink-dim); letter-spacing: 0.04em; }
+.nav-label-strong {
+  box-shadow: 0 0 18px color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+
+/* ── mini chart ──────────────────────────────────────────────────────── */
+.nav-mini {
+  position: absolute; right: 12px; bottom: 214px; z-index: 10;
+  width: 152px;
+  padding: 7px 7px 5px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 20%, transparent);
+  border-radius: 12px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-panel) 80%, transparent),
+    color-mix(in srgb, var(--color-abyss) 86%, transparent));
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.36), inset 0 1px 0 color-mix(in srgb, var(--color-ice) 7%, transparent);
+}
+.nav-mini-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 6px; margin-bottom: 4px;
+}
+.nav-mini-svg { width: 100%; height: auto; display: block; cursor: crosshair; border-radius: 50%; }
+.nav-mini-svg:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--focus-ring); }
+
+/* ── glass rails (left nav + information panels) ─────────────────────── */
+.glass {
+  border: 1px solid color-mix(in srgb, var(--color-accent) 16%, transparent);
+  border-radius: 14px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-panel) 82%, transparent),
+    color-mix(in srgb, var(--color-abyss) 88%, transparent));
+  backdrop-filter: blur(22px) saturate(1.12);
+  -webkit-backdrop-filter: blur(22px) saturate(1.12);
+  box-shadow:
+    0 22px 50px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 color-mix(in srgb, var(--color-ice) 7%, transparent);
+}
+
+/* slim anchored navigation rail */
+.nav-rail {
+  position: absolute; left: 12px; top: 12px; bottom: 12px; z-index: 14;
+  width: 52px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 3px; padding: 8px 0;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 18%, transparent);
+  border-radius: 14px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-panel) 84%, transparent),
+    color-mix(in srgb, var(--color-abyss) 90%, transparent));
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.36);
+}
+.nav-rail-btn {
+  position: relative;
+  display: grid; place-items: center;
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-ink-faint);
+  cursor: pointer;
+  transition: color 130ms, background 130ms, border-color 130ms;
+}
+.nav-rail-btn:hover { color: var(--color-ink); background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.nav-rail-btn.active {
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  box-shadow: inset 0 0 16px color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+.nav-rail-btn.active::before {
+  content: "";
+  position: absolute; left: -7px; top: 9px; bottom: 9px;
+  width: 2px; border-radius: 2px;
+  background: var(--color-accent);
+  box-shadow: 0 0 10px var(--color-accent);
+}
+.nav-rail-btn:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--focus-ring); }
+.nav-rail-btn .dot {
+  position: absolute; top: 5px; right: 5px;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--color-risk-crit);
+  box-shadow: 0 0 8px var(--color-risk-crit);
+}
+.nav-rail-sep { width: 24px; height: 1px; background: var(--color-line-2); margin: 4px 0; }
+
+/* ── responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .nav-mini { width: 118px; right: 8px; bottom: 168px; }
+  .nav-readout { display: none; }
+  .nav-mode-btn { padding: 8px 6px; font-size: 8px; }
+}
+@media (max-width: 700px) {
+  .nav-mini { display: none; }
+  .nav-instrument-bar { top: 8px; right: 8px; }
+  .nav-tilt { display: none; }
+  .nav-rail {
+    left: 8px; right: 8px; top: auto; bottom: 8px;
+    width: auto; height: 48px;
+    flex-direction: row; justify-content: space-around;
+    padding: 0 6px;
+  }
+  .nav-rail-btn.active::before { left: 9px; right: 9px; top: -7px; bottom: auto; width: auto; height: 2px; }
+  .nav-rail-sep { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-label, .nav-mode-btn, .nav-ctl { transition: none; }
+}

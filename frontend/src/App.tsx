@@ -34,10 +34,10 @@ function CommandCenter() {
   return (
     <div className="h-full flex flex-col bg-abyss">
       <TopBar />
-      <div className="flex-1 flex min-h-0 relative">
+      <div className="dss-stage flex-1 flex min-h-0 relative">
         {/* left rail — mission */}
         <aside
-          className={`flex-none border-r border-line bg-panel/80 backdrop-blur transition-[width] duration-200 overflow-hidden hidden md:block ${
+          className={`dss-left-rail flex-none border-r border-line bg-panel/80 backdrop-blur transition-[width] duration-200 overflow-hidden hidden md:block ${
             leftOpen ? 'w-[302px]' : 'w-0'
           }`}
           aria-label="Mission panel"
@@ -54,7 +54,7 @@ function CommandCenter() {
         </button>
 
         {/* map — the centerpiece */}
-        <main className="flex-1 relative min-w-0">
+        <main className="dss-map-stage flex-1 relative min-w-0">
           <AntarcticMap />
           <MapLegend />
           <InspectorDrawer />
@@ -70,7 +70,7 @@ function CommandCenter() {
           {rightOpen ? '▸' : '◂'}
         </button>
         <aside
-          className={`flex-none border-l border-line bg-panel/80 backdrop-blur transition-[width] duration-200 overflow-hidden hidden lg:block ${
+          className={`dss-right-rail flex-none border-l border-line bg-panel/80 backdrop-blur transition-[width] duration-200 overflow-hidden hidden lg:block ${
             rightOpen ? 'w-[302px]' : 'w-0'
           }`}
           aria-label="Layers and alerts panel"

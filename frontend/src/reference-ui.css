@@ -1,0 +1,13 @@
+/* Reference-inspired composition: map is the hero, controls float above it. */
+.dss-stage { position:relative; overflow:hidden; }
+.dss-map-stage { position:absolute; inset:0; width:100%; }
+.dss-left-rail, .dss-right-rail { position:absolute; top:18px; bottom:18px; z-index:12; width:292px !important; border:1px solid rgba(135,190,220,.24); border-radius:14px; overflow:hidden; background:linear-gradient(180deg,rgba(7,24,42,.88),rgba(3,14,27,.86)); box-shadow:0 18px 45px rgba(0,0,0,.32), inset 0 1px rgba(255,255,255,.08); }
+.dss-left-rail { left:10px; border-left:0; }
+.dss-right-rail { right:10px; border-right:0; }
+.dss-left-rail > div, .dss-right-rail > div { width:100% !important; }
+.dss-stage > button { z-index:20; background:rgba(5,20,36,.9); border-color:rgba(117,187,220,.35); }
+header { height:64px !important; padding-inline:28px !important; background:linear-gradient(90deg,rgba(5,22,39,.98),rgba(9,29,49,.92)) !important; box-shadow:0 5px 24px rgba(0,0,0,.28); }
+header .font-data.font-bold { letter-spacing:.04em; font-family:var(--font-ui); font-size:16px !important; }
+header .label-xs { letter-spacing:.04em; }
+@media (max-width: 1100px) { .dss-right-rail { width:270px !important; } .dss-left-rail { width:260px !important; } }
+@media (max-width: 700px) { .dss-left-rail,.dss-right-rail { top:auto; bottom:8px; height:210px; width:calc(100% - 16px) !important; left:8px; right:8px; border-radius:14px; } .dss-left-rail { display:none !important; } header { padding-inline:12px !important; height:56px !important; } }

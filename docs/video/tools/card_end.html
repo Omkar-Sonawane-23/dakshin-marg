@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  html, body { margin: 0; padding: 0; width: 1600px; height: 900px; background: #060b11; overflow: hidden; }
+  body { font-family: Inter, 'Segoe UI', system-ui, sans-serif; color: #dce8f2; display: flex; flex-direction: column;
+         justify-content: center; align-items: center; position: relative; }
+  .grid { position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 50% 45%, rgba(90,200,255,.09), transparent 60%),
+      repeating-linear-gradient(0deg, rgba(120,170,210,.05) 0 1px, transparent 1px 60px),
+      repeating-linear-gradient(90deg, rgba(120,170,210,.05) 0 1px, transparent 1px 60px); }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  h2 { font-size: 46px; letter-spacing: .05em; margin: 0 0 26px; font-weight: 600; color: #eaf6ff; text-align: center; }
+  .line { font-size: 21px; color: #9fb6ca; line-height: 1.7; text-align: center; }
+  .accent { color: #56d6c8; }
+  .warn { color: #f0b862; }
+  .box { margin-top: 40px; border: 1px solid rgba(120,170,210,.28); border-radius: 4px; padding: 22px 30px; max-width: 1040px; }
+  .box .mono { font-size: 14px; color: #7f9bb2; line-height: 1.85; letter-spacing: .04em; }
+  .foot { position: absolute; bottom: 54px; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: .18em; color: #5f7b91; }
+  .beacon { position: absolute; bottom: 0; left: 50%; width: 320px; height: 3px; transform: translateX(-50%);
+            background: linear-gradient(90deg, transparent, #56d6c8, transparent); }
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+  <h2>Decision support — the human decides</h2>
+  <div class="line">
+    Every route, risk score and forecast is generated from real open data<br />
+    and labelled with its provenance. <span class="accent">The system recommends; the operator accepts.</span>
+  </div>
+  <div class="box">
+    <div class="mono">
+      DATA HONESTY &nbsp;·&nbsp; one labelled simulated fact in the re-planning drill<br />
+      <span class="warn">REFUSALS</span> &nbsp;·&nbsp; dates outside the data window · horizons beyond +72 h · NO SAFE ROUTE<br />
+      NOT COMPUTED &nbsp;·&nbsp; fuel (no validated consumption model)<br />
+      SOURCES &nbsp;·&nbsp; NSIDC Sea Ice Index v4 · USNIC · BYU/NIC v8 · Open-Meteo · IMO POLARIS · Overland 1990
+    </div>
+  </div>
+  <div class="foot">POLARIS-X · docs/VIDEO_SCRIPT.md · docs/implementation-status.md</div>
+  <div class="beacon"></div>
+</body>
+</html>

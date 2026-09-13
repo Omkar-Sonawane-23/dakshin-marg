@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { FORECAST_HORIZONS, useEnv } from '../state/envStore';
 import EnvLayerControl from './EnvLayerControl';
 import { Details, EmptyState, ProvBadge, SectionTitle, Skeleton, Toggle } from './ui';
+import NoSafeRoute from './NoSafeRoute';
 
 /** Severity chip: text + shape icon, never color alone (accessibility rule). */
 const SEV_ICON: Record<string, string> = { LOW: '●', MEDIUM: '◆', HIGH: '▲', CRITICAL: '■' };
@@ -227,6 +228,7 @@ const PROFILE_GLYPH: Record<string, string> = {
 function RoutePlannerSection() {
   const env = useEnv();
   const plan = env.routePlan?.data;
+  const allInfeasible = plan ? plan.routes.every(r=>r.status!=='OK') : false;
 
   return (
     <div className="px-3 space-y-2">
@@ -249,7 +251,10 @@ function RoutePlannerSection() {
 
       {env.routePlanError && <ErrorNote code={env.routePlanError.code} message={env.routePlanError.message} />}
 
-      {plan && !env.routePlanLoading && (
+      {allInfeasible && !env.routePlanLoading && (
+        <NoSafeRoute reason="All severity ceilings violated for this vessel and surface. System prefers NO SAFE ROUTE over a false route." onOptions={()=>env.setRiskIceClass('PC3')} />
+      )}
+      {plan && !env.routePlanLoading && !allInfeasible && (
         <div className="space-y-1.5 fade-in">
           {plan.routes.map((r) => {
             const sel = env.selectedRouteProfile === r.profile;

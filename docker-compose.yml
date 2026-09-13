@@ -1,0 +1,64 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4173:4173"
+    environment:
+      - VITE_PY_URL=http://python-services:8100
+      - VITE_API_URL=http://backend:8200
+    depends_on:
+      - python-services
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8200:8200"
+    environment:
+      - PORT=8200
+      - PY_SERVICES_URL=http://python-services:8100
+      - MONGODB_URL=mongodb://mongo:27017
+    depends_on:
+      - python-services
+      - mongo
+      - redis
+
+  python-services:
+    build:
+      context: ./python-services
+      dockerfile: Dockerfile
+    ports:
+      - "8100:8100"
+    volumes:
+      - ./data:/app/data:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  worker:
+    build:
+      context: ./python-services
+      dockerfile: Dockerfile
+    command: python -m env_data.worker
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - redis
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  mongo-data:

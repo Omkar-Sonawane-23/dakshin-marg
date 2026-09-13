@@ -2,6 +2,7 @@ import { useStore } from '../state/store';
 import { useEnv } from '../state/envStore';
 import { useMission } from '../state/missionStore';
 import { useTheme } from '../state/themeStore';
+import { useAuth } from '../state/authStore';
 import { fmtScenarioTime } from '../lib/format';
 import { RiskChip } from './ui';
 
@@ -20,6 +21,7 @@ export default function TopBar() {
   const env = useEnv();
   const ms = useMission();
   const { theme, toggleTheme } = useTheme();
+  const { user } = useAuth();
   const m = env.mode === 'LIVE' ? ms.mission : null;
 
   const statusColor =
@@ -152,6 +154,10 @@ export default function TopBar() {
         >
           LIVE
         </button>
+      </div>
+
+      <div className="hidden sm:flex items-center gap-1.5 text-[9px] font-data text-ink-faint border border-line rounded-sm px-2 py-1">
+        <span className="h-1.5 w-1.5 rounded-full bg-risk-LOW" />{user?.role ?? 'VIEWER'} · {user?.name ?? '—'}
       </div>
 
       {/* theme toggle — explicit choice persists; system preference otherwise */}

@@ -55,6 +55,7 @@ polaris-x/
 | [docs/route-optimization.md](docs/route-optimization.md) | Severity-ceiling A* route optimizer |
 | [docs/replanning-drill.md](docs/replanning-drill.md) | Deterministic dynamic re-planning demonstration |
 | [docs/mission-simulation.md](docs/mission-simulation.md) | **Mission creation, voyage simulation, dynamic re-planning & layer control (deliverables A–G)** |
+| [docs/VIDEO_SCRIPT.md](docs/VIDEO_SCRIPT.md) | **Recording script for the SIH prototype video (LIVE mode): shot list, narration, pre-flight, recovery, verified numbers** |
 
 ## Current Status
 

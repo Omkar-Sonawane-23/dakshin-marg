@@ -1,0 +1,45 @@
+POLARIS-X — TELEPROMPTER NARRATION ONLY (no stage directions)
+Total run time ≈ 6:45. Pauses are marked with //. Read the number you SEE on screen if it differs.
+
+──────────────────────────────────────────────────────
+[0:00] SHOT 1 — cold open on the polar chart
+Every austral summer, India's research stations are resupplied through Antarctic sea ice — where the ice charts are days old, icebergs move, and the ice edge can shift overnight. POLARIS-X turns open satellite and model data into a risk picture, route options, and a re-planning decision — and it keeps the human in command at every step. //
+
+[0:22] SHOT 2 — LIVE mode
+This is the running system, in LIVE mode. Everything on screen is computed from real datasets — NSIDC sea-ice concentration, USNIC iceberg positions, BYU and NIC iceberg tracks, and Open-Meteo wind and temperature. No API keys, no invented data. //
+
+[0:40] SHOT 3 — Map Layers and provenance
+Every layer declares what it is and how old it is — observation, model output, or planned. Ocean currents and waves are PLANNED: no data source is connected yet, so the system says so instead of drawing something that does not exist. //
+
+[1:00] SHOT 4 — Sea ice and uncertainty
+This is the latest NSIDC daily analysis in our data window — 1 September, mean concentration thirty-nine point eight percent over the corridor. I can step back through eight observation days, or forecast forward. At plus forty-eight hours the damped-trend model gives forty-two percent with an uncertainty band of five point seven percent, and a backtest error of four percent — against four point two for persistence. The badge changes to SEA-ICE FORECAST, because this number is model output, not an observation. //
+
+[1:30] SHOT 5 — Iceberg intelligence
+Thirteen icebergs are charted in the area; seventeen have real tracks from the BYU database, and five are classified as moving. The drift forecast carries an empirical P90 corridor of about forty-two kilometres at seven days — and the card states openly that the track archive lags real time, which is why current positions come from the USNIC chart. //
+
+[1:50] SHOT 6 — Risk, and why the vessel changes the answer
+Risk is the core product: the IMO POLARIS risk index for sea ice, Overland's icing predictor, and iceberg hazard zones — combined worst-case, never averaged. With a PC5 ice class the worst cell in the area is normal operation: RIO plus ten. Now watch the only thing I change — the vessel. PC7: minus nine, and a quarter of the cells move into the elevated band. No ice class at all: minus forty-nine, and over half the area becomes critical. Same ocean, same data — the vessel changes the answer. //
+
+[2:25] SHOT 7 — Route optimization
+For routing, the optimizer does not invent cost weights — it applies severity ceilings as hard constraints. DIRECT is eight hundred and sixty-seven nautical miles, sixty-nine hours, with twenty percent of the route in medium severity. CONSERVATIVE costs a hundred and thirty extra miles to keep the whole route LOW. The recommendation cites IMO circular 1519 — avoid elevated-risk areas when planning. And fuel reads NOT COMPUTED, because no validated consumption model exists. We do not guess numbers we cannot defend. //
+
+[3:00] SHOT 8 — Mission creation
+Now the real workflow — a resupply mission. Origin picked on the map, destination Bharati station in Prydz Bay, departure the second of September. The wizard validates the date against the actual data window — the twenty-fifth of August to the fourth of September — and tells me which observation and which weather hour it will use. Ice class PC5, twelve and a half knots, and a deliberately strict ceiling: nothing worse than LOW on the remaining route. //
+
+[3:40] SHOT 9 — Accept the route
+Three options for that departure time — all eight hundred and sixty-nine miles and LOW at this hour. I take the recommended DIRECT line. Notice that acceptance is a human click: the system never starts a voyage by itself. The vessel now moves along the accepted geometry at the optimizer's own speed model — there is no decorative animation. //
+
+[4:05] SHOT 10 — Under way
+I advance the mission clock twelve hours at a time. Conditions at the vessel update with the clock — wind, air temperature, nearest ice cell. And every three simulated hours the remaining route is re-assessed against the data valid at that time. This is where the system earns its keep: I do not have to notice the change — the system watches it. //
+
+[4:35] SHOT 11 — ROUTE REVIEW REQUIRED, re-plan, accept
+There it is — ROUTE REVIEW REQUIRED. The re-assessment found medium severity on the remaining route, which breaks the ceiling the operator set. It names the primary factor, and it pauses. It does not reroute on its own. I ask for alternatives from our current position at the current time. Three candidates; CONSERVATIVE is recommended — five hundred and seventy miles, and the smallest exposure of the three. I accept it: the active route changes, the track restarts from this point, and the decision is written into the mission log with the operator action. //
+
+[5:10] SHOT 12 — Set up the drill
+For the finale, a repeatable drill. It simulates exactly one fact — iceberg D23 ungrounding and drifting a hundred kilometres north, into our corridor — and it is deterministic: the same document every run. Every route, every risk number, every corridor radius is computed by the same live engines you have just seen. //
+
+[5:30] SHOT 13 — The drill: deviation, conflict, re-plan, accept
+Accept the recommended route. Twenty-four hours at cruise speed: three hundred miles covered — then the simulated re-sighting arrives, and D23 is inside the corridor. The remaining leg goes from LOW to CRITICAL, with a closest approach of two and a half kilometres. Re-planning recommends CONSERVATIVE: five hundred and ninety-two miles, all LOW — twenty-five miles longer than staying put. The why-changed panel gives four reasons, including that the old line would keep one point four percent of the route in critical severity. I accept it — and the new route becomes active. //
+
+[6:15] SHOT 14 — Close
+One thing on honesty, because it matters for a decision-support system. Everything in this demo is real open data and real math, with exactly one labelled simulated fact — the berg re-sighting. The system refuses dates outside the data window, refuses horizons beyond seventy-two hours, and reports no safe route when there is not one. POLARIS-X predicts, assesses and recommends. The officer on the bridge decides. Thank you.

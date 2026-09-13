@@ -174,20 +174,26 @@ export class PolarScene {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.08;
-    this.controls.rotateSpeed = 0.55;
-    this.controls.zoomSpeed = 0.9;
-    this.controls.panSpeed = 0.8;
-    this.controls.screenSpacePanning = false;
+    this.controls.rotateSpeed = 0.6;
+    this.controls.zoomSpeed = 1.0;
+    this.controls.panSpeed = 1.0;
+    this.controls.screenSpacePanning = true;
+    this.controls.enablePan = true;
+    this.controls.enableRotate = true;
+    this.controls.enableZoom = true;
     this.controls.minDistance = MIN_DIST;
     this.controls.maxDistance = MAX_DIST;
     this.controls.minPolarAngle = 0.02;
     this.controls.maxPolarAngle = Math.PI * 0.485;
+    // Google-maps style free navigation: left-drag pans the chart in
+    // screen space (sideways + vertical), right-drag orbits, wheel zooms.
+    // One-finger touch pans, two-finger pinch zooms + pans.
     this.controls.mouseButtons = {
-      LEFT: THREE.MOUSE.ROTATE,
+      LEFT: THREE.MOUSE.PAN,
       MIDDLE: THREE.MOUSE.DOLLY,
-      RIGHT: THREE.MOUSE.PAN,
+      RIGHT: THREE.MOUSE.ROTATE,
     };
-    this.controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
+    this.controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_PAN };
 
     // ── lighting: one low sun for long polar shadows + cool sky fill ──
     this.key = new THREE.DirectionalLight(this.palette.keyLight, this.palette.keyIntensity);

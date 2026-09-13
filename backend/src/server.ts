@@ -12,6 +12,9 @@ import { icebergsRouter } from './routes/icebergs.js';
 import { riskRouter } from './routes/risk.js';
 import { routesOptRouter } from './routes/routesOpt.js';
 import { missionsRouter } from './routes/missions.js';
+import { vesselsRouter } from './routes/vessels.js';
+import { healthRouter } from './routes/health.js';
+import { provenanceRouter } from './routes/provenance.js';
 import { pyGet, UpstreamError } from './pythonClient.js';
 
 const app = express();
@@ -48,6 +51,9 @@ app.use('/api/icebergs', icebergsRouter);
 app.use('/api/risk', riskRouter);
 app.use('/api/routes', routesOptRouter);
 app.use('/api/missions', missionsRouter);
+app.use('/api/vessels', vesselsRouter);
+app.use('/api/system/health', healthRouter);
+app.use('/api/provenance', provenanceRouter);
 
 // JSON 404 so clients always get the uniform error envelope.
 app.use('/api', (_req, res) => {

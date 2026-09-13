@@ -23,3 +23,9 @@ node_modules/
 .DS_Store
 .idea/
 .vscode/
+
+# Generated demo video — master render and raw narration clips stay local
+# (the 720p cut, subtitles and stills in docs/video/ ARE committed)
+docs/video/POLARIS-X-demo.mp4
+docs/video/POLARIS-X-narration.mp3
+docs/video/audio/

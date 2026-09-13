@@ -42,6 +42,12 @@ so re-recording visuals never means re-timing the voice.
   everywhere it appears, and the payload carries `simulated: true` + a warning.
 - The end card states this on screen, so the video cannot be mistaken for claiming a live feed.
 
+**Artefact left behind by the recording:** `data/missions/missions.json` gains the mission the video
+creates — `Bharati resupply — leg 2` (PC5 · 12.5 kn · ceiling LOW), state `IN_PROGRESS`, with its real
+event log (`ROUTES_GENERATED -> ROUTE_ACCEPTED -> RISK_ALERT -> REPLAN_GENERATED -> ROUTE_CHANGED`).
+That is the run you see on camera; open it from the Missions list to replay it, or delete it before
+a live demo if you want a clean list.
+
 ## 3. Regenerating / re-recording
 
 The exact pipeline that produced these files is in [`tools/`](tools/):

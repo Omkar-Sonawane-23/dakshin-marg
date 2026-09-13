@@ -55,6 +55,15 @@ function buildHull(): THREE.BufferGeometry {
     flatPos.push(pos[s], pos[s + 1], pos[s + 2]);
   }
   hull.setAttribute('position', new THREE.Float32BufferAttribute(flatPos, 3));
+  const uv = new Float32Array((flatPos.length / 3) * 2);
+  for (let i = 0; i < flatPos.length / 3; i++) {
+    const x = flatPos[i * 3];
+    const y = flatPos[i * 3 + 1];
+    const z = flatPos[i * 3 + 2];
+    uv[i * 2] = (x + 1) * 0.5;
+    uv[i * 2 + 1] = (z + 1) * 0.5 + (y + 1) * 0.25;
+  }
+  hull.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
   hull.computeVertexNormals();
   hull.userData.color = 0xdfe9f2;
   parts.push(hull);
@@ -101,7 +110,21 @@ function buildHull(): THREE.BufferGeometry {
   crane.translate(W * 0.55, 0.12, L * 0.12);
   add(crane, 0xffb02e);
 
-  const merged = mergeGeometries(parts, false);
+  const normalized = parts.map((g) => {
+    const base = g.index ? g.toNonIndexed() : g.clone();
+    if (!base.attributes.uv) {
+      const pos = base.attributes.position;
+      const uv = new Float32Array(pos.count * 2);
+      for (let i = 0; i < pos.count; i++) {
+        uv[i * 2] = (pos.getX(i) + 1) * 0.5;
+        uv[i * 2 + 1] = (pos.getY(i) + 1) * 0.5;
+      }
+      base.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    }
+    return base;
+  });
+  const merged = mergeGeometries(normalized, false);
+  normalized.forEach((p) => p.dispose());
   parts.forEach((p) => p.dispose());
   if (!merged) throw new Error('vessel geometry merge failed');
   return merged;

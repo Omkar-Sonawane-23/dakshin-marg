@@ -5,6 +5,10 @@
 **Mode recorded:** **LIVE** — real datasets, real engines. Nothing in this script is a mock-up; every number quoted was read off the running system on 2026-09-13 and is re-verifiable from the API (§5).
 
 > Read §1 and §2 once, do one silent rehearsal with §3, then record. Keep §9 (recovery) open on a second screen while recording.
+>
+> **A recorded version of this script already exists** — [`video/POLARIS-X-demo.mp4`](video/README.md)
+> (7:09, LIVE mode, narrated, with subtitles and stills). Use it as the reference take, or re-record
+> with your own voice over the same cues.
 
 ---
 

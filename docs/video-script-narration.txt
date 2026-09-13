@@ -43,3 +43,15 @@ Accept the recommended route. Twenty-four hours at cruise speed: three hundred m
 
 [6:15] SHOT 14 — Close
 One thing on honesty, because it matters for a decision-support system. Everything in this demo is real open data and real math, with exactly one labelled simulated fact — the berg re-sighting. The system refuses dates outside the data window, refuses horizons beyond seventy-two hours, and reports no safe route when there is not one. POLARIS-X predicts, assesses and recommends. The officer on the bridge decides. Thank you.
+
+──────────────────────────────────────────────────────
+OPTIONAL BRIDGING LINES (used in the generated video; not needed for a live 8-minute delivery)
+
+[between SHOT 7 and SHOT 8 · while the wizard fills in]
+The departure date is validated against the real data window before the mission is accepted — no silent substitution.
+The optimizer then runs on the risk surface resolved for that departure time: one profile per severity ceiling,
+each one either a feasible plan or an honest refusal.
+
+[over the end card]
+POLARIS-X predicts, assesses and recommends — from real open data, with every product labelled by its source.
+The officer on the bridge decides.

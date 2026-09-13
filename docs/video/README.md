@@ -1,7 +1,7 @@
 # POLARIS-X — demo video (generated from the running system)
 
-**Master:** `POLARIS-X-demo.mp4` — 1600×900, 30 fps, 7:10, narrated (kept out of Git: 55 MB)
-**Shareable:** `POLARIS-X-demo-720p.mp4` — 1280×720, 30 fps, 7:10, narrated (29 MB, committed)
+**Master:** `POLARIS-X-demo.mp4` — 1600×900, 30 fps, 7:09, narrated (kept out of Git: 55 MB)
+**Shareable:** `POLARIS-X-demo-720p.mp4` — 1280×720, 30 fps, 7:09, narrated (29 MB, committed)
 **Narration only:** `POLARIS-X-narration.mp3` · **Subtitles:** `POLARIS-X-demo.srt`
 **Stills for the pitch deck:** `stills/01…08.jpg`
 
@@ -14,21 +14,25 @@
 
 ## 1. Storyboard (timecodes in the master)
 
+Narration is placed automatically from the recorded cue timeline — 12 clips, one per beat —
+so re-recording visuals never means re-timing the voice.
+
 | Time | Act | On screen | Narration |
 |---|---|---|---|
-| 0:00 | Title card | POLARIS-X · OBSERVE → PREDICT → ASSESS → OPTIMIZE → DECIDE | hook |
-| 0:05 | Hook | 3-D polar chart, slow drift, LIVE badge | why Antarctic resupply needs decision support |
-| 0:33 | LIVE mode | `SIMULATION → LIVE` toggle; LIVE badge + latest analysis date | real datasets: NSIDC · USNIC · BYU/NIC · Open-Meteo |
-| 1:02 | Provenance | Map Layers: status chips, age, PLANNED ocean rows | "it says so instead of inventing data" |
-| 1:08 | Sea ice | observation day scrubber → **+48 h** forecast → σ uncertainty band → model card | 39.8 % observation; +48 h 42.1 % ± 5.7 %, MAE 4.0 % vs persistence 4.2 % |
-| 1:47 | Icebergs | 13 charted · 17 tracked · 5 moving; focus C18C; drift tracks toggled | P90 corridor ±41.9 km @ 7 d; archive lag stated |
-| 2:07 | Risk | risk layer ON; ice class **PC5 → PC7 → NONE → PC5**; *Why this risk?* | RIO +10 → −9 → −49; worst-case combination, never averaged |
-| 2:54 | Route planner | **Calculate routes** → DIRECT / BALANCED / CONSERVATIVE → details + method | severity ceilings, MSC.1/Circ.1519, fuel **NOT COMPUTED** |
-| 3:43 | Mission | wizard: name, map pick, Bharati station, departure, PC5 · 12.5 kn · ceiling LOW, review | data window validated, nothing hardcoded |
-| 4:36 | Voyage sim | accept DIRECT → voyage sim → `+12 h` ×2 (T+24 h, 288 nm) → conditions at vessel | vessel moves on the accepted geometry at the optimizer's speed model |
-| 5:08 | **ROUTE REVIEW REQUIRED** | alert (primary factor), pause, `Generate alternative routes` → candidates → accept CONSERVATIVE | doesn't reroute on its own; operator decides |
-| 6:13 | Re-planning drill | `Run simulation` → 7 stages → D23 deviation → LOW → CRITICAL, 2.5 km → new route GREEN | one labelled simulated fact; every number from the real engines |
-| 6:5x | End card | honesty summary | the human decides |
+| 0:00 | Title card | POLARIS-X · OBSERVE · PREDICT · ASSESS · OPTIMIZE · DECIDE | — |
+| 0:06 | Hook | 3-D polar chart, slow drift, LIVE badge | why Antarctic resupply needs decision support |
+| 0:31 | LIVE mode | `SIMULATION → LIVE` toggle; LIVE badge + latest analysis date | real datasets: NSIDC · USNIC · BYU/NIC · Open-Meteo |
+| 0:47 | Provenance | Map Layers: status chips, age, PLANNED ocean rows | "it says so instead of inventing data" |
+| 1:03 | Sea ice | observation day scrubber → **+48 h** forecast → σ band → model card | 39.8 % observation; +48 h 42.1 % ± 5.7 %, MAE 4.0 % vs persistence 4.2 % |
+| 1:38 | Icebergs | 13 charted · 17 tracked · 5 moving; focus C18C; drift tracks toggled | P90 corridor ±41.9 km @ 7 d; archive lag stated |
+| 2:08 | Risk | risk layer ON; ice class **PC5 → PC7 → NONE → PC5**; *Why this risk?* | RIO +10 → −9 → −49; worst-case combination, never averaged |
+| 2:55 | Route planner | **Calculate routes** → DIRECT / BALANCED / CONSERVATIVE → details + method | severity ceilings, MSC.1/Circ.1519, fuel **NOT COMPUTED** |
+| 3:44 | Mission | wizard: name, map pick, Bharati station, departure, PC5 · 12.5 kn · ceiling LOW, review | data window validated, nothing hardcoded |
+| 4:15 | Mission (cont.) | departure validation line + vessel configuration | "validated against the real data window… a feasible plan or an honest refusal" |
+| 4:38 | Voyage sim | accept DIRECT → voyage sim → `+12 h` ×2 (T+24 h, 288 nm) → conditions at vessel | vessel moves on the accepted geometry at the optimizer's speed model |
+| 5:09 | **ROUTE REVIEW REQUIRED** | alert (primary factor), pause, `Generate alternative routes` → candidates → accept CONSERVATIVE | doesn't reroute on its own; the operator decides |
+| 5:54 | Re-planning drill | `Run simulation` → 7 stages → D23 deviation → LOW → CRITICAL, 2.5 km → **accept new route (GREEN)** | one labelled simulated fact; every number from the real engines |
+| 6:41 | Close / end card | honesty summary card | "…the officer on the bridge decides." |
 
 ## 2. What is simulated in this video
 
@@ -48,6 +52,7 @@ The exact pipeline that produced these files is in [`tools/`](tools/):
 | `tools/bootstrap.mjs` | Inflates the headless Chromium used in the sandbox (SwiftShader WebGL + fonts) |
 | `tools/card_title.html`, `tools/card_end.html`, `tools/cards.mjs` | Title / end cards |
 | `tools/assemble.py` | Cuts the warm-up, builds the narration mix from the cue timeline, concats cards, encodes the master, writes the `.srt` |
+| `tools/timeline.json` | Every cue time recorded during the take (`shot01_cue` … `shot10_cue`, `take_start`) — the single source of truth for narration placement |
 
 ```bash
 # 1 · services (three terminals, or START-POLARIS-X.bat)

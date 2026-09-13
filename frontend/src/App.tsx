@@ -189,14 +189,14 @@ function CommandCenter() {
 
         <NavRail section={section} onSection={onSection} onCommand={()=>setPaletteOpen(true)} />
 
-        <aside className={`dss-left-rail flex-none transition-[width] duration-200 overflow-hidden hidden md:block ${leftOpen ? 'w-[320px]' : 'w-0'}`} aria-label="Mission panel">
-          <div className="w-[320px] h-full border-l border-line bg-panel">{leftOpen && leftContent()}</div>
+        <aside className={`dss-left-rail hidden md:block ${leftOpen ? '' : 'is-collapsed'}`} aria-label="Mission panel" aria-hidden={!leftOpen}>
+          <div className="h-full border-l border-line bg-panel overflow-y-auto">{leftContent()}</div>
         </aside>
-        <button className="dss-rail-tab absolute top-1/2 z-20 -translate-y-1/2 h-14 w-[16px] items-center justify-center text-[9px] hidden md:flex" style={{ left: leftOpen ? 380 : 62, borderRadius:'0 4px 4px 0' }} onClick={()=>setLeftOpen(!leftOpen)} aria-label={leftOpen?'Collapse':'Expand'}>{leftOpen?'◂':'▸'}</button>
+        <button className="dss-rail-tab absolute top-1/2 z-20 -translate-y-1/2 h-14 w-[16px] items-center justify-center text-[9px] hidden md:flex" style={{ left: leftOpen ? 374 : 66, borderRadius:'0 4px 4px 0' }} onClick={()=>setLeftOpen(!leftOpen)} aria-label={leftOpen?'Hide left panel':'Show left panel'} aria-expanded={leftOpen}>{leftOpen?'◂':'▸'}</button>
 
-        <button className="dss-rail-tab absolute top-1/2 z-20 -translate-y-1/2 h-14 w-[16px] items-center justify-center text-[9px] hidden lg:flex" style={{ right: rightOpen ? 336 : 0, borderRadius:'4px 0 0 4px' }} onClick={()=>setRightOpen(!rightOpen)} aria-label={rightOpen?'Collapse':'Expand'}>{rightOpen?'▸':'◂'}</button>
-        <aside className={`dss-right-rail flex-none transition-[width] duration-200 overflow-hidden hidden lg:block ${rightOpen ? 'w-[336px]' : 'w-0'}`} aria-label="Module panel">
-          <div className="w-[336px] h-full border-l border-line bg-panel">{rightOpen && rightContent()}</div>
+        <button className="dss-rail-tab absolute top-1/2 z-20 -translate-y-1/2 h-14 w-[16px] items-center justify-center text-[9px] hidden lg:flex" style={{ right: rightOpen ? 312 : 12, borderRadius:'4px 0 0 4px' }} onClick={()=>setRightOpen(!rightOpen)} aria-label={rightOpen?'Hide right panel':'Show right panel'} aria-expanded={rightOpen}>{rightOpen?'▸':'◂'}</button>
+        <aside className={`dss-right-rail hidden lg:block ${rightOpen ? '' : 'is-collapsed'}`} aria-label="Module panel" aria-hidden={!rightOpen}>
+          <div className="h-full border-l border-line bg-panel overflow-y-auto">{rightContent()}</div>
         </aside>
 
         {!live && section==='MISSION' && <RouteComparison />}

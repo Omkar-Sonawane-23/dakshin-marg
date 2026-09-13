@@ -391,7 +391,7 @@ export default function AntarcticMap() {
       className={`nav-scene relative h-full w-full overflow-hidden select-none ${dragCursorClass(mission.pickTarget !== null)}`}
       tabIndex={0}
       role="application"
-      aria-label="Antarctic 3D navigation environment. Drag to orbit, right-drag to pan, scroll to zoom. Arrow keys pan, plus and minus zoom, 0 resets."
+      aria-label="Antarctic 3D navigation environment. Drag to pan free like Google Maps, right-drag to orbit, scroll to zoom. Arrow keys pan, plus and minus zoom, 0 resets."
       onKeyDown={onKeyDown}
       style={{ background: theme === 'light' ? 'var(--map-bg-0)' : 'var(--color-abyss)' }}
     >

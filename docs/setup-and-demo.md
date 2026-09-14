@@ -58,7 +58,8 @@ python3 -m uvicorn env_data.api:app --host 0.0.0.0 --port 8100
 cd backend && npm run start
 
 # 3 · Frontend
-cd frontend && npm run dev        # dev server        → http://localhost:5173
+cd frontend && npm run dev        # showcase → http://localhost:5173
+# working mission console → http://localhost:5173/console
 # — or the production build —
 cd frontend && npm run build && npm run preview   # → http://localhost:4173
 ```

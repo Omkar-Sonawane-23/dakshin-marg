@@ -9,7 +9,7 @@
  * feeds, forecast, risk surfaces, optimizer, drill) are pre-warmed *before* the
  * take, so nothing on camera is a spinner.
  *
- *   node src/recorder.mjs --url=http://localhost:5173   (record)
+ *   node src/recorder.mjs --url=http://localhost:5173/console   (record)
  *   … --dry                                             (screenshots only)
  */
 import { mkdirSync, writeFileSync, existsSync, readFileSync, readdirSync, statSync, rmSync, appendFileSync } from 'node:fs';
@@ -793,7 +793,7 @@ if (process.argv[1] && import.meta.url === `file://${process.argv[1]}`) {
   const script = loadScript({ short: process.argv.includes('--short'), acts: argOf('acts', null) });
   const pf = await preflight({ install: true });
   if (!pf.chromium.ok) throw new Error(pf.chromium.reason);
-  const url = argOf('url', 'http://localhost:5173/');
+  const url = argOf('url', 'http://localhost:5173/console');
   const dry = process.argv.includes('--dry');
   if (dry && existsSync(F.timeline)) log.info(`dry run; previous timeline at ${F.timeline}`);
   if (dry) writeFileSync(join(WORK, 'durations.json'), existsSync(F.durations) ? readFileSync(F.durations) : '{}');

@@ -1,4 +1,4 @@
-/** Shared response types for the POLARIS-X application API. */
+/** Shared response types for the Dakshin Marg application API. */
 
 export type Provenance =
   | 'REAL_OBSERVATION'

@@ -1,4 +1,4 @@
-# POLARIS-X — Research Foundation & Scientific Decision Record
+# Dakshin Marg — Research Foundation & Scientific Decision Record
 
 **Status of this document:** written 2026-09-03, *after* the prototype was built and
 backtested. It is therefore a **decision record with evidence**, not a proposal: where the

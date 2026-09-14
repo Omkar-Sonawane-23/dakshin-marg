@@ -1,8 +1,8 @@
-# POLARIS-X — Setup & Demo Guide
+# Dakshin Marg — Setup & Demo Guide
 
 ## 0. Windows one-click start
 
-Double-click **`START-POLARIS-X.bat`** in the repository root. It will:
+Double-click **`START-DAKSHIN-MARG.bat`** in the repository root. It will:
 
 1. verify Python 3.11+ and Node.js 20+ are installed (with clear guidance if not),
 2. install Python/Node dependencies (first run only — later runs skip this),

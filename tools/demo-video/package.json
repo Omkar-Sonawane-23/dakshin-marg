@@ -1,0 +1,24 @@
+{
+  "name": "dakshin-marg-demo-video",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Dakshin Marg — one-click SIH demo-video generator (record the running app, narrate it with TTS, assemble the MP4).",
+  "bin": {
+    "make-demo": "./bin/make-demo.mjs"
+  },
+  "scripts": {
+    "demo": "node bin/make-demo.mjs",
+    "demo:short": "node bin/make-demo.mjs --short",
+    "preflight": "node bin/make-demo.mjs --only=preflight",
+    "narration": "node bin/make-demo.mjs --only=narration",
+    "record": "node bin/make-demo.mjs --only=record",
+    "assemble": "node bin/make-demo.mjs --only=assemble"
+  },
+  "dependencies": {
+    "playwright-core": "^1.63.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

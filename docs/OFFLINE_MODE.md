@@ -1,4 +1,4 @@
-# Offline Mode — POLARIS-X
+# Offline Mode — Dakshin Marg
 
 ## Modes
 - **CONNECTED** — all services reachable, latest products shown.

@@ -1,4 +1,4 @@
-"""POLARIS-X — Scientific invariant tests (pytest).
+"""Dakshin Marg — Scientific invariant tests (pytest).
 Run: python -m pytest tests/test_invariants.py -v
 """
 import sys

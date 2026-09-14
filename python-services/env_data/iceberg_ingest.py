@@ -44,7 +44,7 @@ def ingest_tracks() -> dict:
     raw_path = RAW_DIR / "byu_iceberg_db_v8.zip"
     if not raw_path.exists():
         print("downloading BYU consolidated database (~4 MB)…")
-        req = urllib.request.Request(BYU_URL, headers={"User-Agent": "POLARIS-X-prototype/0.1"})
+        req = urllib.request.Request(BYU_URL, headers={"User-Agent": "DakshinMarg-prototype/0.1"})
         raw_path.write_bytes(urllib.request.urlopen(req, timeout=120).read())
 
     cutoff = (datetime.now(timezone.utc) - timedelta(days=365 * RECENT_YEARS)).strftime("%Y-%m-%d")

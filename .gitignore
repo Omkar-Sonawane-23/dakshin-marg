@@ -24,8 +24,18 @@ node_modules/
 .idea/
 .vscode/
 
-# Generated demo video — master render and raw narration clips stay local
-# (the 720p cut, subtitles and stills in docs/video/ ARE committed)
+# Demo-video pipeline scratch (raw recording, intermediates, logs).
+# The narration clips in tools/demo-video/narration/ ARE committed on purpose:
+# they are the offline fallback voice for the one-click render.
+tools/demo-video/work/
+tools/demo-video/.extras/
+
+# Generated demo video — master render stays local (large);
+# the 720p cut, subtitles and stills in docs/video/ ARE committed
+docs/video/Dakshin-Marg-demo.mp4
+docs/video/Dakshin-Marg-narration.mp3
+docs/video/audio/
+
+# Pre-rename artefacts (kept out of the tree; regenerate with ./make-demo.sh)
 docs/video/POLARIS-X-demo.mp4
 docs/video/POLARIS-X-narration.mp3
-docs/video/audio/

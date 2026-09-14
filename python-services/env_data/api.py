@@ -1,4 +1,4 @@
-"""POLARIS-X environmental data API (FastAPI).
+"""Dakshin Marg environmental data API (FastAPI).
 
 Serves the NORMALIZED datasets with:
   · provenance on every response (REAL_OBSERVATION / REAL_HISTORICAL /
@@ -28,7 +28,7 @@ from .risk_engine import RIV_TABLE, route_risk, spatial_risk
 from .route_optimizer import PROFILES, optimize
 from .time_resolver import availability as env_availability, resolve as resolve_time
 
-app = FastAPI(title="POLARIS-X Environmental Data API", version="0.6.0")
+app = FastAPI(title="Dakshin Marg Environmental Data API", version="0.6.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -253,8 +253,8 @@ def seaice_forecast(horizon_h: int = Query(48, description="Forecast horizon: 24
             "model": result["model"],
             "source": {
                 "id": "seaice_forecast",
-                "name": "POLARIS-X sea-ice damped-trend forecast",
-                "provider": "POLARIS-X ML service",
+                "name": "Dakshin Marg sea-ice damped-trend forecast",
+                "provider": "Dakshin Marg ML service",
                 "url": "internal:/ml/sea-ice/forecast",
             },
             "quality": "ok",

@@ -1,4 +1,4 @@
-/** POLARIS-X application API (Node/Express/TS).
+/** Dakshin Marg application API (Node/Express/TS).
  *
  * Role per architecture: orchestration layer between the React UI and the
  * Python scientific services. It joins, caches and shapes responses; it
@@ -39,7 +39,7 @@ app.get('/api/health', async (_req, res) => {
     /* stays down */
   }
   res.json({
-    service: 'polaris-x-backend',
+    service: 'dakshin-marg-backend',
     version: '0.1.0',
     status: 'ok',
     dependencies: { pythonServices: python },
@@ -75,5 +75,5 @@ app.use(
 );
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`polaris-x backend listening on :${PORT}`);
+  console.log(`dakshin-marg backend listening on :${PORT}`);
 });

@@ -22,7 +22,7 @@ import type { ZoneSpec } from '../src/map3d/zones';
 import type { WindCellSpec } from '../src/map3d/weather';
 import type { OptRoute } from '../src/types/env';
 
-const BASE = process.env.POLARIS_BASE ?? 'http://localhost:5173';
+const BASE = process.env.DAKSHIN_MARG_BASE ?? 'http://localhost:5173';
 const AOI = '40,-72,100,-55';
 
 let failures = 0;

@@ -1,4 +1,4 @@
-// POLARIS-X — Scientific invariant tests (run with `npx tsx tests/invariants.test.ts`)
+// Dakshin Marg — Scientific invariant tests (run with `npx tsx tests/invariants.test.ts`)
 import assert from 'node:assert';
 
 // ── Vessel rank invariant ───────────────────────────────────────

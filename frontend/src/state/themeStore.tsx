@@ -2,7 +2,7 @@
  * Theme store — one design system, two themes.
  *
  * Resolution order:
- *   1. explicit user choice persisted in localStorage ('polaris-theme')
+ *   1. explicit user choice persisted in localStorage ('dakshin-marg-theme')
  *   2. OS preference via prefers-color-scheme (tracked live until the
  *      user makes an explicit choice)
  *   3. dark (mission-control default)
@@ -15,7 +15,9 @@ import { createContext, useCallback, useContext, useEffect, useState, type React
 
 export type Theme = 'dark' | 'light';
 
-const STORAGE_KEY = 'polaris-theme';
+const STORAGE_KEY = 'dakshin-marg-theme';
+/** Pre-rename key (the product was called POLARIS-X); read once, then migrated. */
+const LEGACY_STORAGE_KEY = 'polaris-theme';
 
 function systemTheme(): Theme {
   if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: light)').matches) return 'light';
@@ -24,7 +26,14 @@ function systemTheme(): Theme {
 
 function storedTheme(): Theme | null {
   try {
-    const t = localStorage.getItem(STORAGE_KEY);
+    // 'polaris-theme' is the pre-rename key; migrate it once so an existing
+    // operator does not lose their choice.
+    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+    const t = localStorage.getItem(STORAGE_KEY) ?? legacy;
+    if (legacy && !localStorage.getItem(STORAGE_KEY)) {
+      localStorage.setItem(STORAGE_KEY, legacy);
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+    }
     return t === 'light' || t === 'dark' ? t : null;
   } catch {
     return null;

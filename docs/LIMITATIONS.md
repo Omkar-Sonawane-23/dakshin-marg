@@ -1,4 +1,4 @@
-# Limitations — POLARIS-X
+# Limitations — Dakshin Marg
 
 1. **Grid resolution 0.5°×0.25° (~14×28 km):** corridor-level guidance, not a nautical chart. Sub-cell hazards caught by dense route assessment and noted.
 2. **No validated fuel model:** optimizer returns fuel NOT COMPUTED. Demo fuel figures are unvalidated estimates.

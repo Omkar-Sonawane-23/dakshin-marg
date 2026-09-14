@@ -1,4 +1,4 @@
-# Verification — POLARIS-X
+# Verification — Dakshin Marg
 
 ## How to Verify
 1. Open **Verification / Hindsight** in the left rail.

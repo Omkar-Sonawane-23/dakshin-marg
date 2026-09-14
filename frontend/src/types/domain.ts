@@ -1,5 +1,5 @@
 /**
- * POLARIS-X domain types — the typed contract the UI is built against.
+ * Dakshin Marg domain types — the typed contract the UI is built against.
  * These mirror docs/api-contracts.md; the mock API layer implements them
  * today, and the real Node API will implement the same shapes later.
  *

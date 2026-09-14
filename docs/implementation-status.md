@@ -1,4 +1,4 @@
-# POLARIS-X — Implementation Status
+# Dakshin Marg — Implementation Status
 
 **Authoritative feature tracker. Vocabulary: IMPLEMENTED · IN PROGRESS · PLANNED.**
 **Never claims functionality that does not exist.**

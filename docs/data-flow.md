@@ -1,4 +1,4 @@
-# POLARIS-X — Data Flow
+# Dakshin Marg — Data Flow
 
 **Status:** Phase 0 baseline · Last updated 2026-09-02
 

@@ -1,4 +1,4 @@
-# Model Card — POLARIS-X
+# Model Card — Dakshin Marg
 
 ## SIC Forecast — damped-trend v0.1.0
 - **Type:** Damped trend (non-ML baseline); ConvLSTM/U-Net planned.

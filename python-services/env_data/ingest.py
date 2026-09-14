@@ -23,7 +23,7 @@ from .config import (
 )
 from .validation import validate_icebergs, validate_seaice_grid, validate_weather
 
-UA = {"User-Agent": "POLARIS-X-prototype/0.1 (SIH research demo)"}
+UA = {"User-Agent": "DakshinMarg-prototype/0.1 (SIH research demo)"}
 
 
 def _get(url: str, timeout: int = 60) -> bytes:
@@ -271,7 +271,7 @@ def ingest_weather() -> dict:
 
 
 if __name__ == "__main__":
-    print("POLARIS-X environmental ingestion")
+    print("Dakshin Marg environmental ingestion")
     print("== sea ice (NSIDC) ==");   ingest_seaice()
     print("== icebergs (USNIC) =="); ingest_icebergs()
     print("== weather (Open-Meteo) =="); ingest_weather()

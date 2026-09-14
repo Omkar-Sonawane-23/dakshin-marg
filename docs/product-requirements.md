@@ -1,4 +1,4 @@
-# POLARIS-X — Product Requirements
+# Dakshin Marg — Product Requirements
 
 **Status:** Phase 0 baseline · Last updated 2026-09-02
 

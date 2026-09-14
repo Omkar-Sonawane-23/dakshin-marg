@@ -1,4 +1,4 @@
-# POLARIS-X — Prototype Video Script (LIVE-mode recording)
+# Dakshin Marg — Prototype Video Script (LIVE-mode recording)
 
 **For:** Smart India Hackathon demo video · Ministry of Earth Sciences (NCPOR) · Transportation & Logistics
 **Recording target:** 6:45 (hard cap 7:00) · **optional 3:00 cut in §8**
@@ -6,8 +6,13 @@
 
 > Read §1 and §2 once, do one silent rehearsal with §3, then record. Keep §9 (recovery) open on a second screen while recording.
 >
-> **A recorded version of this script already exists** — [`video/POLARIS-X-demo.mp4`](video/README.md)
-> (7:09, LIVE mode, narrated, with subtitles and stills). Use it as the reference take, or re-record
+> **This script is now automated.** [`../tools/demo-video/`](../tools/demo-video/README.md)
+> records, narrates (TTS) and encodes it in one command (`./make-demo.sh`); the act list in
+> `tools/demo-video/narration.json` is this script's shot list, machine-readable. For a
+> hand-held take, this document remains the teleprompter.
+>
+> **A generated version of this script exists** — [`video/`](video/README.md)
+> (narrated, LIVE mode, with subtitles and stills). Use it as the reference take, or re-record
 > with your own voice over the same cues.
 
 ---
@@ -27,7 +32,7 @@
 
 ### 2.1 Start the stack
 
-**Windows (recommended):** double-click **`START-POLARIS-X.bat`** → opens **http://localhost:4173**. It health-checks all three services and pre-computes the re-planning drill.
+**Windows (recommended):** double-click **`START-DAKSHIN-MARG.bat`** → opens **http://localhost:4173**. It health-checks all three services and pre-computes the re-planning drill.
 
 **Linux/macOS (three terminals):**
 
@@ -101,7 +106,7 @@ The mission list persists (MongoDB if present, otherwise `data/missions/missions
 - DO: nothing. Let the scene settle; drag once, slowly, to show depth (no zooming while talking).
 - YOU SEE: 3-D south-polar chart, ice-shelf relief, coastline, graticule, **LIVE** badge.
 - SAY:
-  > "Every austral summer, India's research stations are resupplied through Antarctic sea ice — where the ice charts are days old, icebergs move, and the ice edge can shift overnight. POLARIS-X turns open satellite and model data into a risk picture, route options, and a re-planning decision — and it keeps the human in command at every step."
+  > "Every austral summer, India's research stations are resupplied through Antarctic sea ice — where the ice charts are days old, icebergs move, and the ice edge can shift overnight. Dakshin Marg turns open satellite and model data into a risk picture, route options, and a re-planning decision — and it keeps the human in command at every step."
 
 **Shot 2 · 0:22–0:40 · LIVE mode**
 - DO: point at the **SIMULATION / LIVE** toggle (top-right, LIVE selected), then at the chart badge.
@@ -200,7 +205,7 @@ The mission list persists (MongoDB if present, otherwise `data/missions/missions
 **Shot 14 · 6:15–6:45 · wide shot, honesty + human-in-the-loop**
 - DO: scroll the event log once, slowly, then stop on the whole screen.
 - SAY:
-  > "One thing on honesty, because it matters for a decision-support system. Everything in this demo is real open data and real math, with exactly one labelled simulated fact — the berg re-sighting. The system refuses dates outside the data window, refuses horizons beyond seventy-two hours, and reports no safe route when there is not one. POLARIS-X predicts, assesses and recommends. The officer on the bridge decides. Thank you."
+  > "One thing on honesty, because it matters for a decision-support system. Everything in this demo is real open data and real math, with exactly one labelled simulated fact — the berg re-sighting. The system refuses dates outside the data window, refuses horizons beyond seventy-two hours, and reports no safe route when there is not one. Dakshin Marg predicts, assesses and recommends. The officer on the bridge decides. Thank you."
 
 ---
 

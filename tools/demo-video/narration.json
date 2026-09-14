@@ -1,0 +1,163 @@
+{
+  "$schema": "./narration.schema.json",
+  "product": "Dakshin Marg",
+  "voice": {
+    "edge-tts": "en-IN-NeerjaNeural",
+    "edge-tts-fallback": "en-US-AriaNeural",
+    "openai": "gpt-4o-mini-tts",
+    "openai-voice": "nova",
+    "sapi": "Microsoft Heera Desktop",
+    "rate": "-4%",
+    "pitch": "+0Hz"
+  },
+  "cards": {
+    "titleSeconds": 5.0,
+    "endSeconds": 8.0
+  },
+  "acts": [
+    {
+      "id": "00_title",
+      "group": "cards",
+      "core": true,
+      "screen": "title card",
+      "beat": "Rendered title card (brand, pipeline, data sources).",
+      "text": "Dakshin Marg — the southern path. An AI-enabled Antarctic sea-ice, iceberg trajectory and navigation decision support system, built for the Smart India Hackathon for the Ministry of Earth Sciences and NCPOR."
+    },
+    {
+      "id": "01_open",
+      "group": "tour",
+      "core": true,
+      "screen": "boot → 3-D polar chart, brand wordmark, LIVE badge",
+      "beat": "Open the app, slow drift on the 3-D chart.",
+      "text": "Every austral summer, India's research stations are resupplied through Antarctic sea ice — where the ice charts are days old, icebergs move, and the ice edge can shift overnight. Dakshin Marg turns open satellite and model data into a risk picture, route options, and a re-planning decision — and it keeps the human in command at every step."
+    },
+    {
+      "id": "02_live",
+      "group": "tour",
+      "core": true,
+      "screen": "SIMULATION → LIVE toggle, LIVE badge, latest analysis date",
+      "beat": "Switch to LIVE, let the real datasets load.",
+      "text": "This is the running system, in LIVE mode. Everything on screen is computed from real datasets — NSIDC sea-ice concentration, USNIC iceberg positions, BYU and NIC iceberg tracks, and Open-Meteo wind and temperature. No API keys, and no invented data."
+    },
+    {
+      "id": "03_tour_plan",
+      "group": "tour",
+      "core": true,
+      "screen": "nav rail → Mission Control, Route Planner, Vessel Profiles (each panel scrolled)",
+      "beat": "Walk the PLAN group of the nav rail, scrolling each panel top to bottom.",
+      "text": "Before the deep dive, a walk through the whole console. Plan: Mission Control, the Route Planner with its Pareto trade-offs, and Vessel Profiles, where each ice class carries its own capability limits. There are no mock screens here — every panel is the real application reading the real engines."
+    },
+    {
+      "id": "04_tour_env",
+      "group": "tour",
+      "core": true,
+      "screen": "nav rail → Sea-Ice, Icebergs, Weather & Ocean, Risk (each panel scrolled) + map layer list",
+      "beat": "Walk the ENV group, scrolling each panel, then open the map layer control.",
+      "text": "Environment: sea-ice concentration and forecast, iceberg intelligence, weather and ocean, and the risk picture. Every layer declares what it is and how old it is — observation, model output, or planned. Ocean currents and waves are marked PLANNED, because no data source is connected yet: the system says so instead of drawing something that does not exist."
+    },
+    {
+      "id": "05_tour_ops",
+      "group": "tour",
+      "core": true,
+      "screen": "nav rail → Scenario, Verification, Provenance, Alerts, System Health",
+      "beat": "Walk the OPS group, scrolling each panel.",
+      "text": "Operations: what-if scenarios, verification and hindsight skill scores, data provenance with a lineage for every product, the alert centre, and system health. This is the audit trail — if a number is challenged in a review, this is where you find exactly how it was produced."
+    },
+    {
+      "id": "06_seaice",
+      "group": "workflow",
+      "core": true,
+      "screen": "sea-ice observation scrubber → +48 h forecast → σ band → model card",
+      "beat": "Scrub observation days, switch to +48 h, enable the uncertainty layer, open the model card.",
+      "text": "This is the latest NSIDC daily analysis in our data window — the first of September, mean concentration thirty-nine point eight percent along the corridor. I can step back through eight observation days, or forecast forward. At plus forty-eight hours the damped-trend model gives forty-two percent, with an uncertainty band of five point seven percent and a backtest error of four percent — against four point two for persistence. The badge changes to SEA-ICE FORECAST, because this is model output, not an observation."
+    },
+    {
+      "id": "07_icebergs",
+      "group": "workflow",
+      "core": true,
+      "screen": "iceberg catalogue → C18C focus → drift tracks toggled",
+      "beat": "Open iceberg intelligence, focus a named berg, toggle drift forecasts.",
+      "text": "Thirteen icebergs are charted in this area; seventeen have real tracks from the BYU database, and five are classified as moving. The drift forecast carries an empirical P90 corridor of about forty-two kilometres at seven days. And the card states openly that the track archive lags real time — which is why current positions come from the USNIC chart."
+    },
+    {
+      "id": "08_risk",
+      "group": "workflow",
+      "core": true,
+      "screen": "risk layer ON; ice class PC5 → PC7 → NONE → PC5; Why this risk?",
+      "beat": "Turn the risk layer on and sweep the vessel ice class, then open the explanation.",
+      "text": "Risk is the core product: the IMO POLARIS risk index for sea ice, Overland's icing predictor, and iceberg hazard zones — combined worst-case, never averaged. With a PC5 ice class, the worst cell in the area is normal operation: RIO plus ten. Now watch the only thing I change — the vessel. PC7: minus nine, and a quarter of the cells move into the elevated band. No ice class at all: minus forty-nine, and over half the area becomes critical. Same ocean, same data — the vessel changes the answer."
+    },
+    {
+      "id": "09_routes",
+      "group": "workflow",
+      "core": true,
+      "screen": "Calculate routes → DIRECT / BALANCED / CONSERVATIVE → details → method",
+      "beat": "Run the optimizer, compare the three profiles, open route details and the method note.",
+      "text": "For routing, the optimizer does not invent cost weights — it applies severity ceilings as hard constraints. DIRECT is eight hundred and sixty-seven nautical miles, sixty-nine hours, with twenty percent of the route in medium severity. CONSERVATIVE costs a hundred and thirty extra miles to keep the whole route low. The recommendation cites IMO circular 1519 — avoid elevated-risk areas when planning. And fuel reads NOT COMPUTED, because no validated consumption model exists. We do not guess numbers we cannot defend."
+    },
+    {
+      "id": "10_mission",
+      "group": "workflow",
+      "core": true,
+      "screen": "mission wizard: name, vessel, origin map pick, Bharati destination, departure, ice class, speed, ceiling, review",
+      "beat": "Fill the wizard end to end, pick the origin on the map, search Bharati, review.",
+      "text": "Now the real workflow — a resupply mission. Origin picked on the map, destination Bharati station in Prydz Bay, departure the second of September. The wizard validates the date against the actual data window — the twenty-fifth of August to the fourth of September — and tells me which observation and which weather hour it will use. Ice class PC5, twelve and a half knots, and a deliberately strict ceiling: nothing worse than low on the remaining route."
+    },
+    {
+      "id": "10b_bridge",
+      "group": "workflow",
+      "core": false,
+      "screen": "wizard review → Create mission & generate routes",
+      "beat": "Hold on the review panel while the mission is created and routes are generated.",
+      "text": "The departure date is validated against the real data window before the mission is accepted — no silent substitution. The optimizer then runs on the risk surface resolved for that departure time: one profile per severity ceiling, each one either a feasible plan or an honest refusal."
+    },
+    {
+      "id": "11_accept",
+      "group": "workflow",
+      "core": true,
+      "screen": "three route options → accept DIRECT → voyage simulation starts",
+      "beat": "Select the recommended route and accept it as a human decision.",
+      "text": "Three options for that departure — all eight hundred and sixty-nine miles and low at this hour. I take the recommended DIRECT line. Acceptance is a human click: the system never starts a voyage by itself. The vessel then moves along the accepted geometry at the optimizer's own speed model — there is no decorative animation."
+    },
+    {
+      "id": "12_underway",
+      "group": "workflow",
+      "core": true,
+      "screen": "mission clock +12 h, conditions at vessel, remaining-route re-assessment",
+      "beat": "Advance the mission clock twice and show conditions at the vessel.",
+      "text": "I advance the mission clock twelve hours at a time. Conditions at the vessel update with the clock — wind, air temperature, nearest ice cell. And every three simulated hours the remaining route is re-assessed against the data valid at that time. This is where the system earns its keep: I do not have to notice the change — the system watches it."
+    },
+    {
+      "id": "13_review",
+      "group": "workflow",
+      "core": true,
+      "screen": "ROUTE REVIEW REQUIRED → Generate alternative routes → candidates → accept CONSERVATIVE",
+      "beat": "Let the alert fire, request alternatives, accept the conservative candidate.",
+      "text": "There it is — ROUTE REVIEW REQUIRED. The re-assessment found medium severity on the remaining route, which breaks the ceiling the operator set. It names the primary factor, and it pauses. It does not reroute on its own. I ask for alternatives from our current position, at the current time. Three candidates; CONSERVATIVE is recommended — five hundred and seventy miles, and the smallest exposure of the three. I accept it: the active route changes, the track restarts from this point, and the decision is written into the mission log."
+    },
+    {
+      "id": "14_drill_setup",
+      "group": "workflow",
+      "core": true,
+      "screen": "re-planning drill: Run simulation → stage list → accept recommended route",
+      "beat": "Start the deterministic re-planning drill and accept its route.",
+      "text": "For the finale, a repeatable drill. It simulates exactly one fact — iceberg D23 ungrounding and drifting a hundred kilometres north, into our corridor — and it is deterministic: the same document every run. Every route, every risk number, every corridor radius is computed by the same live engines you have just seen."
+    },
+    {
+      "id": "15_drill",
+      "group": "workflow",
+      "core": true,
+      "screen": "drill stages: underway → deviation → conflict → re-plan → decision → accept new route (GREEN)",
+      "beat": "Advance the drill stage by stage and accept the new route.",
+      "text": "Twenty-four hours at cruise speed: three hundred miles covered — then the simulated re-sighting arrives, and D23 is inside the corridor. The remaining leg goes from low to critical, with a closest approach of two and a half kilometres. Re-planning recommends CONSERVATIVE: five hundred and ninety-two miles, all low — twenty-five miles longer than staying put. I accept it, and the new route becomes active."
+    },
+    {
+      "id": "16_close",
+      "group": "cards",
+      "core": true,
+      "screen": "event log → end card (honesty summary)",
+      "beat": "Scroll to the mission event log, then fade to the end card.",
+      "text": "One thing on honesty, because it matters for a decision-support system. Everything in this demo is real open data and real math, with exactly one labelled simulated fact — the berg re-sighting. The system refuses dates outside the data window, refuses horizons beyond seventy-two hours, and reports no safe route when there is not one. Dakshin Marg predicts, assesses and recommends. The officer on the bridge decides. Thank you."
+    }
+  ]
+}

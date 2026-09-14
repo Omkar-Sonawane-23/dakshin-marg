@@ -1,4 +1,4 @@
-# Edge Cases — POLARIS-X
+# Edge Cases — Dakshin Marg
 
 | Category | Case | Handling |
 |---|---|---|

@@ -17,9 +17,10 @@ OBSERVE → PREDICT → ASSESS → OPTIMIZE → DECIDE
 ## Quick Start
 
 **Windows:** double-click **`START-DAKSHIN-MARG.bat`** — it installs
-dependencies on first run, starts all three services, and opens the app at
-http://localhost:4173. Only prerequisites: Python 3.11+ and Node.js 20+ on
-PATH.
+dependencies on first run, starts all three services, and opens the reviewer
+showcase at http://localhost:4173. The working mission console is available at
+http://localhost:4173/console. Only prerequisites: Python 3.11+ and Node.js
+20+ on PATH.
 
 **Linux/macOS:** see [docs/setup-and-demo.md](docs/setup-and-demo.md)
 (three commands, three terminals).

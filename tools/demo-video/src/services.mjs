@@ -173,7 +173,7 @@ export async function startServices({ frontend = 'dev', timeoutSec = 120, build 
     started.push(svc);
   }
 
-  const url = `http://localhost:${feDef.port}/`;
+  const url = `http://localhost:${feDef.port}/console`;
   log.ok(`all services up → ${url}`);
   return { services: started, url, port: feDef.port };
 }
@@ -184,7 +184,7 @@ async function finishWithDev(started, timeoutSec) {
   svc.start('npm', ['run', 'dev']);
   if (!await waitHealthy(feDef, timeoutSec)) throw new Error(`web app did not become healthy on :${feDef.port}`);
   started.push(svc);
-  return { services: started, url: `http://localhost:${feDef.port}/`, port: feDef.port };
+  return { services: started, url: `http://localhost:${feDef.port}/console`, port: feDef.port };
 }
 
 /** Warm the caches the take depends on, so recording runs at UI speed. */

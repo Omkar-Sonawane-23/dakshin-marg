@@ -3,14 +3,14 @@
  * Browser smoke test — proves the recorder's browser can open the app and that
  * the WebGL chart actually renders. Writes tools/demo-video/work/shots/smoke.png.
  *
- *   node tools/demo-video/bin/check-browser.mjs [--url=http://localhost:5173/]
+ *   node tools/demo-video/bin/check-browser.mjs [--url=http://localhost:5173/console]
  */
 import { join } from 'node:path';
 import { WORK, VIDEO, ensureDirs, makeLogger } from '../src/config.mjs';
 import { preflight } from '../src/preflight.mjs';
 
 const log = makeLogger();
-const url = process.argv.find((a) => a.startsWith('--url='))?.slice(6) ?? 'http://localhost:5173/';
+const url = process.argv.find((a) => a.startsWith('--url='))?.slice(6) ?? 'http://localhost:5173/console';
 
 ensureDirs();
 const pf = await preflight({ install: true });

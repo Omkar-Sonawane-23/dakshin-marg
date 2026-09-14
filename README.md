@@ -1,11 +1,11 @@
-# POLARIS-X
+# Dakshin Marg
 
 **AI-Enabled Antarctic Sea-Ice, Iceberg Trajectory & Navigation Decision Support System**
 
 Smart India Hackathon prototype · Ministry of Earth Sciences (MoES) · NCPOR
 Theme: Transportation & Logistics · Category: Software
 
-> POLARIS-X is a **decision-support system** — it transforms Antarctic
+> Dakshin Marg is a **decision-support system** — it transforms Antarctic
 > observations into predictions, risk assessments, and route recommendations.
 > It is **not** an autonomous ship-control system: the final navigation
 > decision always remains with a qualified human operator.
@@ -16,7 +16,7 @@ OBSERVE → PREDICT → ASSESS → OPTIMIZE → DECIDE
 
 ## Quick Start
 
-**Windows:** double-click **`START-POLARIS-X.bat`** — it installs
+**Windows:** double-click **`START-DAKSHIN-MARG.bat`** — it installs
 dependencies on first run, starts all three services, and opens the app at
 http://localhost:4173. Only prerequisites: Python 3.11+ and Node.js 20+ on
 PATH.
@@ -24,16 +24,24 @@ PATH.
 **Linux/macOS:** see [docs/setup-and-demo.md](docs/setup-and-demo.md)
 (three commands, three terminals).
 
+**Demo video (one click):** `./make-demo.sh` on Linux/macOS, or double-click
+**`MAKE-DEMO-VIDEO.bat`** on Windows (or `npm run demo:video`). It boots the
+services, opens the app in a real browser, scrolls through every screen, runs
+the full mission workflow, narrates it with text-to-speech and encodes
+`docs/video/Dakshin-Marg-demo.mp4` + a 720p submission cut + subtitles.
+See [tools/demo-video/README.md](tools/demo-video/README.md).
+
 ## Repository Layout
 
 ```
-polaris-x/
-├── START-POLARIS-X.bat   # Windows one-click launcher
+dakshin-marg/
+├── START-DAKSHIN-MARG.bat   # Windows one-click launcher
 ├── frontend/             # React + TS + Vite + Tailwind · custom polar map
 ├── backend/              # Node.js + Express + TS application API (:8200)
 ├── python-services/      # FastAPI scientific/ML services (:8100)
 ├── data/                 # real/ cached sources · normalized/ validated snapshots
 ├── shared/               # reserved for shared schemas
+├── tools/                # demo-video pipeline (one-click SIH video) & rename tool
 └── docs/                 # architecture & engineering documentation
 ```
 
@@ -55,6 +63,9 @@ polaris-x/
 | [docs/route-optimization.md](docs/route-optimization.md) | Severity-ceiling A* route optimizer |
 | [docs/replanning-drill.md](docs/replanning-drill.md) | Deterministic dynamic re-planning demonstration |
 | [docs/mission-simulation.md](docs/mission-simulation.md) | **Mission creation, voyage simulation, dynamic re-planning & layer control (deliverables A–G)** |
+| [docs/VIDEO_SCRIPT.md](docs/VIDEO_SCRIPT.md) | **Recording script for the SIH prototype video (LIVE mode): shot list, narration, pre-flight, recovery, verified numbers** |
+| [docs/video/](docs/video/README.md) | **SIH demo video (narrated, subtitles + stills), generated from the running app** |
+| [tools/demo-video/](tools/demo-video/README.md) | **The one-click pipeline that records + narrates + encodes that video** |
 
 ## Current Status
 

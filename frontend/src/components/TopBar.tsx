@@ -39,7 +39,7 @@ export default function TopBar() {
           <path d="M12 5 L17 15 L7 15 Z" fill="none" stroke="var(--color-ice)" strokeWidth="1.5" strokeLinejoin="round" />
         </svg>
         <div className="leading-none">
-          <div className="font-data font-bold text-[14px] tracking-[0.22em] text-ice">POLARIS-X</div>
+          <div className="font-data font-bold text-[14px] tracking-[0.22em] text-ice">DAKSHIN MARG</div>
           <div className="text-[8px] tracking-[0.18em] text-ink-faint mt-0.5">ANTARCTIC NAVIGATION DECISION SUPPORT</div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-# Data Sources — POLARIS-X
+# Data Sources — Dakshin Marg
 
 | Domain | Source | Product | Provenance | Latency | CRS | Notes |
 |---|---|---|---|---|---|---|

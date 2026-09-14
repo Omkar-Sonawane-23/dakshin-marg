@@ -1,0 +1,19 @@
+{
+  "name": "dakshin-marg",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dakshin Marg — AI-enabled Antarctic sea-ice, iceberg trajectory & navigation decision support system (Smart India Hackathon · MoES/NCPOR).",
+  "type": "module",
+  "scripts": {
+    "demo:video": "node tools/demo-video/bin/make-demo.mjs",
+    "demo:video:short": "node tools/demo-video/bin/make-demo.mjs --short",
+    "demo:dry": "node tools/demo-video/bin/make-demo.mjs --dry",
+    "demo:preflight": "node tools/demo-video/bin/make-demo.mjs --only=preflight",
+    "demo:narration": "node tools/demo-video/bin/make-demo.mjs --only=narration",
+    "demo:assemble": "node tools/demo-video/bin/make-demo.mjs --only=assemble",
+    "services": "node tools/demo-video/bin/make-demo.mjs --only=services --keep-services"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

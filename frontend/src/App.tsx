@@ -225,7 +225,7 @@ function BootScreen(){
   return (
     <div className="h-full flex flex-col items-center justify-center bg-abyss text-ice">
       <svg width={48} height={48} viewBox="0 0 24 24" className="mb-4"><circle cx={12} cy={12} r={10} fill="none" stroke="var(--color-accent)" strokeWidth={1.4} /><path d="M12 5 L17 15 L7 15 Z" fill="none" stroke="var(--color-ice)" strokeWidth={1.5} /></svg>
-      <div className="font-data font-bold text-[18px] tracking-[0.22em]">POLARIS-X</div>
+      <div className="font-data font-bold text-[18px] tracking-[0.22em]">DAKSHIN MARG</div>
       <div className="text-[9px] tracking-[0.18em] text-ink-faint mt-1">ANTARCTIC NAVIGATION DSS</div>
       <div className="mt-6 font-data text-[11px] text-accent">{steps[step]}</div>
       <div className="mt-3 w-[220px] h-1 bg-line rounded-full overflow-hidden"><div className="h-full bg-accent transition-all duration-300" style={{width:`${((step+1)/steps.length)*100}%`}} /></div>

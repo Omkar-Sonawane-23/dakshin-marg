@@ -1,4 +1,4 @@
-"""POLARIS-X environmental data layer — configuration & source registry.
+"""Dakshin Marg environmental data layer — configuration & source registry.
 
 Every dataset flowing through this package carries explicit provenance:
   REAL_OBSERVATION  – measured/analysed product from a real provider

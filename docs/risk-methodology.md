@@ -181,5 +181,5 @@ decision support; nothing is autonomous control.
 - Overland, J.E., 1990: *Prediction of Vessel Icing for Near-Freezing Sea
   Temperatures.* Weather & Forecasting 5, 62–77.
 - WMO No. 259 — *Sea-Ice Nomenclature* (open/close pack definitions).
-- POLARIS-X iceberg drift backtest: docs/iceberg-pipeline.md §3.
-- POLARIS-X sea-ice forecast σ: docs/ml-pipeline.md.
+- Dakshin Marg iceberg drift backtest: docs/iceberg-pipeline.md §3.
+- Dakshin Marg sea-ice forecast σ: docs/ml-pipeline.md.

@@ -1,4 +1,4 @@
-# POLARIS-X — Environmental Data Pipeline
+# Dakshin Marg — Environmental Data Pipeline
 
 **Status: IMPLEMENTED (first iteration) · Last updated 2026-09-02**
 

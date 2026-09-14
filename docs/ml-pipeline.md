@@ -1,4 +1,4 @@
-# POLARIS-X — Sea-Ice Intelligence Pipeline (ML)
+# Dakshin Marg — Sea-Ice Intelligence Pipeline (ML)
 
 **Status: IMPLEMENTED (first iteration) · Last updated 2026-09-02**
 Code: `python-services/env_data/seaice_forecast.py` · API: `GET /ml/sea-ice/forecast`

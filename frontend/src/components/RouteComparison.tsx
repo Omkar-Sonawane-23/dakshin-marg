@@ -112,7 +112,7 @@ export default function RouteComparison() {
           <div className="mt-4 flex items-center justify-between gap-3 border border-line rounded-sm px-3 py-2.5">
             <div className="text-[10.5px] text-ink-dim leading-snug">
               <span className="font-bold text-ice">OPERATOR DECISION REQUIRED.</span>{' '}
-              POLARIS-X is a decision-support system — route selection authority remains with the navigator.
+              Dakshin Marg is a decision-support system — route selection authority remains with the navigator.
             </div>
             <div className="flex gap-2 flex-none">
               {decided ? (

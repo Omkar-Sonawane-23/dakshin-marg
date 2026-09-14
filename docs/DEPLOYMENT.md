@@ -1,4 +1,4 @@
-# Deployment — POLARIS-X
+# Deployment — Dakshin Marg
 
 ## One-command (Docker)
 ```bash
@@ -14,7 +14,7 @@ cd frontend && npm run dev    # :5173  (or npm run build && npm run preview → 
 ```
 
 ## Windows
-Double-click `START-POLARIS-X.bat`; it installs deps, builds, and opens http://localhost:4173.
+Double-click `START-DAKSHIN-MARG.bat`; it installs deps, builds, and opens http://localhost:4173.
 
 ## Health Checks
 - `curl :8100/env/health`

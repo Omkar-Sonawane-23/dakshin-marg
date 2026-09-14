@@ -1,4 +1,4 @@
-# Demo Guide — POLARIS-X (8 minutes)
+# Demo Guide — Dakshin Marg (8 minutes)
 
 ## Act 1 — DEMO mode: deterministic scenario (~2 min)
 1. App boots → **SYSTEM READY** → Mission Control (amber SIMULATED badge).

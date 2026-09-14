@@ -1,4 +1,4 @@
-# POLARIS-X — Implementation Status (2026-09-12)
+# Dakshin Marg — Implementation Status (2026-09-12)
 
 **Authoritative tracker. Vocabulary: IMPLEMENTED · IN PROGRESS · PLANNED. Never overclaims.**
 

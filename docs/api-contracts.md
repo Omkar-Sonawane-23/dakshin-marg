@@ -1,4 +1,4 @@
-# POLARIS-X — API Contracts
+# Dakshin Marg — API Contracts
 
 **Status:** Phase 0 draft — contracts defined ahead of implementation.
 Every endpoint below is **PLANNED** until marked otherwise in

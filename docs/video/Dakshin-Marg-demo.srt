@@ -1,0 +1,271 @@
+1
+00:00:00,350 --> 00:00:09,052
+Dakshin Marg — the southern path. An AI-enabled Antarctic sea-ice, iceberg trajectory and navigation decision support
+
+2
+00:00:09,102 --> 00:00:15,710
+system, built for the Smart India Hackathon for the Ministry of Earth Sciences and NCPOR.
+
+3
+00:00:17,310 --> 00:00:25,276
+Every austral summer, India's research stations are resupplied through Antarctic sea ice — where the ice charts are days old,
+
+4
+00:00:25,326 --> 00:00:32,523
+icebergs move, and the ice edge can shift overnight. Dakshin Marg turns open satellite and model data into a risk
+
+5
+00:00:32,573 --> 00:00:39,000
+picture, route options, and a re-planning decision — and it keeps the human in command at every step.
+
+6
+00:00:52,560 --> 00:00:58,629
+This is the running system, in LIVE mode. Everything on screen is computed from
+
+7
+00:00:58,679 --> 00:01:06,141
+real datasets — NSIDC sea-ice concentration, USNIC iceberg positions, BYU and NIC iceberg tracks,
+
+8
+00:01:06,191 --> 00:01:11,640
+and Open-Meteo wind and temperature. No API keys, and no invented data.
+
+9
+00:01:18,990 --> 00:01:25,653
+Before the deep dive, a walk through the whole console. Plan: Mission Control, the Route Planner with
+
+10
+00:01:25,703 --> 00:01:32,897
+its Pareto trade-offs, and Vessel Profiles, where each ice class carries its own capability limits. There are
+
+11
+00:01:32,947 --> 00:01:38,480
+no mock screens here — every panel is the real application reading the real engines.
+
+12
+00:01:46,880 --> 00:01:54,620
+Environment: sea-ice concentration and forecast, iceberg intelligence, weather and ocean, and the risk picture. Every
+
+13
+00:01:54,670 --> 00:01:59,614
+layer declares what it is and how old it is — observation, model output, or
+
+14
+00:01:59,664 --> 00:02:05,872
+planned. Ocean currents and waves are marked PLANNED, because no data source is connected yet:
+
+15
+00:02:05,922 --> 00:02:10,400
+the system says so instead of drawing something that does not exist.
+
+16
+00:02:11,950 --> 00:02:20,135
+Operations: what-if scenarios, verification and hindsight skill scores, data provenance with a lineage for every product,
+
+17
+00:02:20,185 --> 00:02:25,376
+the alert centre, and system health. This is the audit trail — if a number is
+
+18
+00:02:25,426 --> 00:02:30,480
+challenged in a review, this is where you find exactly how it was produced.
+
+19
+00:02:43,520 --> 00:02:48,539
+This is the latest NSIDC daily analysis in our data window — the first of September, mean
+
+20
+00:02:48,589 --> 00:02:55,145
+concentration thirty-nine point eight percent along the corridor. I can step back through eight observation days, or
+
+21
+00:02:55,195 --> 00:03:01,922
+forecast forward. At plus forty-eight hours the damped-trend model gives forty-two percent, with an uncertainty band of
+
+22
+00:03:01,972 --> 00:03:07,048
+five point seven percent and a backtest error of four percent — against four point two for
+
+23
+00:03:07,098 --> 00:03:12,800
+persistence. The badge changes to SEA-ICE FORECAST, because this is model output, not an observation.
+
+24
+00:03:24,320 --> 00:03:32,003
+Thirteen icebergs are charted in this area; seventeen have real tracks from the BYU database, and five are classified as
+
+25
+00:03:32,053 --> 00:03:40,058
+moving. The drift forecast carries an empirical P90 corridor of about forty-two kilometres at seven days. And the card states
+
+26
+00:03:40,108 --> 00:03:46,760
+openly that the track archive lags real time — which is why current positions come from the USNIC chart.
+
+27
+00:03:50,320 --> 00:03:56,687
+Risk is the core product: the IMO POLARIS risk index for sea ice, Overland's icing
+
+28
+00:03:56,737 --> 00:04:04,199
+predictor, and iceberg hazard zones — combined worst-case, never averaged. With a PC5 ice class,
+
+29
+00:04:04,249 --> 00:04:10,068
+the worst cell in the area is normal operation: RIO plus ten. Now watch the
+
+30
+00:04:10,118 --> 00:04:15,624
+only thing I change — the vessel. PC7: minus nine, and a quarter of the
+
+31
+00:04:15,674 --> 00:04:22,040
+cells move into the elevated band. No ice class at all: minus forty-nine, and over
+
+32
+00:04:22,090 --> 00:04:28,770
+half the area becomes critical. Same ocean, same data — the vessel changes the answer.
+
+33
+00:04:30,320 --> 00:04:36,437
+For routing, the optimizer does not invent cost weights — it applies severity ceilings
+
+34
+00:04:36,487 --> 00:04:43,537
+as hard constraints. DIRECT is eight hundred and sixty-seven nautical miles, sixty-nine hours, with
+
+35
+00:04:43,587 --> 00:04:49,776
+twenty percent of the route in medium severity. CONSERVATIVE costs a hundred and thirty
+
+36
+00:04:49,826 --> 00:04:55,728
+extra miles to keep the whole route low. The recommendation cites IMO circular 1519
+
+37
+00:04:55,778 --> 00:05:02,325
+— avoid elevated-risk areas when planning. And fuel reads NOT COMPUTED, because no validated
+
+38
+00:05:02,375 --> 00:05:07,130
+consumption model exists. We do not guess numbers we cannot defend.
+
+39
+00:05:39,680 --> 00:05:47,072
+Now the real workflow — a resupply mission. Origin picked on the map, destination Bharati station in Prydz Bay, departure
+
+40
+00:05:47,122 --> 00:05:54,269
+the second of September. The wizard validates the date against the actual data window — the twenty-fifth of August to
+
+41
+00:05:54,319 --> 00:06:00,850
+the fourth of September — and tells me which observation and which weather hour it will use. Ice class PC5,
+
+42
+00:06:00,900 --> 00:06:07,370
+twelve and a half knots, and a deliberately strict ceiling: nothing worse than low on the remaining route.
+
+43
+00:06:26,860 --> 00:06:32,655
+The departure date is validated against the real data window before the mission is accepted —
+
+44
+00:06:32,705 --> 00:06:39,002
+no silent substitution. The optimizer then runs on the risk surface resolved for that departure time:
+
+45
+00:06:39,052 --> 00:06:44,470
+one profile per severity ceiling, each one either a feasible plan or an honest refusal.
+
+46
+00:06:47,860 --> 00:06:54,183
+Three options for that departure — all eight hundred and sixty-nine miles and low at this hour. I take
+
+47
+00:06:54,233 --> 00:07:01,180
+the recommended DIRECT line. Acceptance is a human click: the system never starts a voyage by itself. The vessel
+
+48
+00:07:01,230 --> 00:07:07,990
+then moves along the accepted geometry at the optimizer's own speed model — there is no decorative animation.
+
+49
+00:07:11,860 --> 00:07:18,272
+I advance the mission clock twelve hours at a time. Conditions at the vessel update with the clock — wind, air
+
+50
+00:07:18,322 --> 00:07:26,145
+temperature, nearest ice cell. And every three simulated hours the remaining route is re-assessed against the data valid at that time.
+
+51
+00:07:26,195 --> 00:07:32,020
+This is where the system earns its keep: I do not have to notice the change — the system watches it.
+
+52
+00:07:44,090 --> 00:07:51,016
+There it is — ROUTE REVIEW REQUIRED. The re-assessment found medium severity on the remaining route, which breaks
+
+53
+00:07:51,066 --> 00:07:56,942
+the ceiling the operator set. It names the primary factor, and it pauses. It does not reroute on
+
+54
+00:07:56,992 --> 00:08:03,918
+its own. I ask for alternatives from our current position, at the current time. Three candidates; CONSERVATIVE is
+
+55
+00:08:03,968 --> 00:08:10,215
+recommended — five hundred and seventy miles, and the smallest exposure of the three. I accept it: the
+
+56
+00:08:10,265 --> 00:08:16,820
+active route changes, the track restarts from this point, and the decision is written into the mission log.
+
+57
+00:08:22,090 --> 00:08:27,879
+For the finale, a repeatable drill. It simulates exactly one fact — iceberg D23
+
+58
+00:08:27,929 --> 00:08:33,941
+ungrounding and drifting a hundred kilometres north, into our corridor — and it is
+
+59
+00:08:33,991 --> 00:08:41,111
+deterministic: the same document every run. Every route, every risk number, every corridor radius
+
+60
+00:08:41,161 --> 00:08:45,250
+is computed by the same live engines you have just seen.
+
+61
+00:08:46,800 --> 00:08:54,016
+Twenty-four hours at cruise speed: three hundred miles covered — then the simulated re-sighting arrives, and D23
+
+62
+00:08:54,066 --> 00:09:00,179
+is inside the corridor. The remaining leg goes from low to critical, with a closest approach of
+
+63
+00:09:00,229 --> 00:09:07,965
+two and a half kilometres. Re-planning recommends CONSERVATIVE: five hundred and ninety-two miles, all low — twenty-five
+
+64
+00:09:08,015 --> 00:09:12,960
+miles longer than staying put. I accept it, and the new route becomes active.
+
+65
+00:09:36,690 --> 00:09:43,863
+One thing on honesty, because it matters for a decision-support system. Everything in this demo is real open
+
+66
+00:09:43,913 --> 00:09:51,153
+data and real math, with exactly one labelled simulated fact — the berg re-sighting. The system refuses dates
+
+67
+00:09:51,203 --> 00:09:58,576
+outside the data window, refuses horizons beyond seventy-two hours, and reports no safe route when there is not
+
+68
+00:09:58,626 --> 00:10:05,130
+one. Dakshin Marg predicts, assesses and recommends. The officer on the bridge decides. Thank you.

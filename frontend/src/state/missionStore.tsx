@@ -748,7 +748,7 @@ export function MissionProvider({ children }: { children: ReactNode }) {
     const route = m.routePlan?.data.routes.find((r) => r.profile === m.activeProfile);
     const lines: string[] = [
       `# Mission report — ${m.name} (${m.id})`, '',
-      `Generated ${isoUtc(Date.now())} by POLARIS-X (decision support; simulated voyage).`, '',
+      `Generated ${isoUtc(Date.now())} by Dakshin Marg (decision support; simulated voyage).`, '',
       `## Mission`,
       `- State: ${m.state}`,
       `- Vessel: ${m.vessel.name} (${m.vessel.type}), ice class ${m.vessel.iceClass}, cruise ${m.vessel.cruiseSpeedKn} kn`,

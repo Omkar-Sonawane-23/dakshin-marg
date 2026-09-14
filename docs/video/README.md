@@ -26,8 +26,8 @@ re-recording the visuals never means re-timing the voice.
 | Act | Group | On screen | Narration |
 |---|---|---|---|
 | 00_title | cards | title card — brand, pipeline, data sources | what Dakshin Marg is |
-| 01_open | tour | app boots → 3-D polar chart, slow drift, wordmark | why Antarctic resupply needs decision support |
-| 02_live | tour | `SIMULATION → LIVE`, LIVE badge, latest analysis date | the real datasets, no keys, no invented data |
+| 01_open | tour | app boots straight into LIVE → 3-D polar chart, slow drift, wordmark | why Antarctic resupply needs decision support |
+| 02_live | tour | LIVE badge, the stacked environment panel scrolled, provenance chips | the real datasets, no keys, no invented data |
 | 03_console_tour | tour | nav rail PLAN group: Mission Control · Route Planner · Vessel Profiles, each scrolled | the whole console, no mock screens |
 | 04_tour_env | tour | ENV group: Sea-Ice · Icebergs · Weather & Ocean · Risk + map layer list | every layer declares what it is and how old |
 | 05_tour_ops | tour | OPS group: Scenario · Verification · Provenance · Alerts · Health | the audit trail |

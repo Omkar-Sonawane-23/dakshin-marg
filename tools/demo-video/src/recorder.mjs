@@ -208,11 +208,22 @@ export async function recordTake(opts) {
   /* ── the take ─────────────────────────────────────────────────────────── */
   const errors = [];
   try {
-    // a fresh load so the viewer watches the app open
-    mark('take_start');
+    // a fresh load so the viewer watches the app open; the LIVE switch and
+    // its feed load happen here, in the trimmed prologue, so the first frame
+    // of the take is already the live system (the brief: LIVE mode only)
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 90000 });
     await page.waitForSelector('.dss-map-stage canvas', { timeout: 60000 }).catch(() => {});
     await sleep(1.2);
+    // gate on a LIVE-only signal (the top-bar analysis stamp), retrying the
+    // tab click once in case the boot overlay swallowed the first one
+    await clickAt(page.getByRole('tab', { name: 'LIVE' }), { settle: 0.6, label: 'LIVE tab (prologue)' }).catch(() => {});
+    if (!await waitText('LATEST ANALYSIS', 25000)) {
+      await clickAt(page.getByRole('tab', { name: 'LIVE' }), { settle: 0.6, label: 'LIVE tab (retry)' }).catch(() => {});
+    }
+    await waitText('LATEST ANALYSIS', 120000);
+    await waitText('Named bergs in area', 60000);
+    await sleep(1.5);
+    mark('take_start');
 
     for (const act of script.acts) {
       if (act.group === 'cards') {
@@ -228,12 +239,16 @@ export async function recordTake(opts) {
         continue;
       }
       const cueT = mark(`${act.id}_cue`);
+      let actOk = true;
       try {
         await (STEPS[act.id] ?? genericTour)(C, act);
       } catch (e) {
+        actOk = false;
         fail(act, e, errors);
       }
       await holdAct(act, cueT);
+      const stillName = HOLD_STILLS[act.id];
+      if (stillName && actOk && record) await C.still(stillName);
     }
     mark('end');
   } catch (e) {
@@ -263,6 +278,18 @@ function fail(act, e, errors) {
   log.warn(`  act ${act.id} failed (continuing): ${msg}`);
 }
 
+/** Stills captured at the end of an act's hold (screen idle, state settled). */
+const HOLD_STILLS = {
+  '01_open': '01_open',
+  '02_live': '02_live_mode',
+  '03_tour_plan': '03_console_tour',
+  '06_seaice': '04_sea_ice_forecast',
+  '09_routes': '06_route_planner',
+  '10_mission': '07_mission_wizard',
+  '12_underway': '08_review_required',
+  '15_drill': '10_new_route_active',
+};
+
 const noop = async () => {};
 
 /* ── act choreography ───────────────────────────────────────────────────── */
@@ -270,10 +297,6 @@ const noop = async () => {};
 const STEPS = {
   /* ACT 01 · open the app in LIVE mode: cold-open drift on the 3-D polar chart */
   async '01_open'(C) {
-    // the whole film is LIVE: switch before the first narration breath lands
-    await C.clickAt(C.page.getByRole('tab', { name: 'LIVE' }), { settle: 0.6, label: 'LIVE tab' }).catch(() => {});
-    await C.waitText('Named bergs in area', 120000);
-    await C.page.waitForTimeout(800);
     const cx = C.width * 0.44;
     const cy = C.height * 0.55;
     await C.glide(cx, cy, 18);
@@ -284,14 +307,12 @@ const STEPS = {
     }
     await C.page.mouse.up();
     await C.shot('01_open');
-    await C.still('01_open');
     await C.glide(C.width * 0.62, C.height * 0.6, 12);
   },
 
   /* ACT 02 · LIVE badge + provenance (already live since act 01) */
   async '02_live'(C) {
     await C.shot('02_live');
-    await C.still('02_live_mode');
     await C.railScroll('PLANNED', 0.9);
     await C.glide(C.width * 0.84, C.height * 0.52, 10);
     await C.scrollThrough(C.railScroller(), { passes: 1, stepMs: 200 });
@@ -305,7 +326,6 @@ const STEPS = {
       await C.scrollThrough(C.railScroller(), { passes: 1, stepMs: 200 });
       await C.shot(`03_${name}`);
     }
-    await C.still('03_console_tour');
   },
 
   /* ACT 04 · tour: ENV group + the map layer list */
@@ -355,7 +375,6 @@ const STEPS = {
     await C.clickAt(C.page.getByRole('tab', { name: '+48H' }), { settle: 0.4, label: '+48H tab' }).catch(() => {});
     await C.waitText('Uncertainty', 60000);
     await C.shot('06_forecast48');
-    await C.still('06_sea_ice_forecast');
     const sigma = C.page.getByRole('switch', { name: 'Toggle uncertainty layer' });
     if (await sigma.count()) { await C.clickAt(sigma, { settle: 1.3, label: 'uncertainty layer' }).catch(() => {}); }
     await C.shot('06_uncertainty');
@@ -403,7 +422,6 @@ const STEPS = {
     await C.clickAt(C.btn(/Calculate routes/i), { settle: 0.4, label: 'calculate routes' });
     await C.waitText('RECOMMENDED', 180000);
     await C.shot('09_routes');
-    await C.still('06_route_planner');
     const direct = C.rail().getByRole('button', { name: /DIRECT/ }).first();
     if (await direct.count()) await C.clickAt(direct, { settle: 0.8, label: 'DIRECT card' }).catch(() => {});
     await C.railScroll('route details', 0.4);
@@ -464,7 +482,6 @@ const STEPS = {
     const ceiling = C.page.getByRole('button', { name: 'LOW', exact: true }).first();
     if (await ceiling.count()) await C.clickAt(ceiling, { settle: 0.5, label: 'ceiling LOW' }).catch(() => {});
     await C.shot('10_departure');
-    await C.still('07_mission_wizard');
   },
 
   /* ACT 10b · review → create → routes generated */
@@ -505,7 +522,6 @@ const STEPS = {
     await C.scrollThrough(C.railScroller(), { passes: 1, stepMs: 190 });
     await C.waitText('ROUTE REVIEW REQUIRED', 60000);
     await C.shot('12_alert');
-    await C.still('08_review_required');
   },
 
   /* ACT 13 · re-plan and accept */
@@ -550,7 +566,6 @@ const STEPS = {
     await C.clickAt(C.btn(/Accept new route/), { settle: 1.6, label: 'accept new route' }).catch(() => {});
     C.mark('drill_new_route_active');
     await C.shot('15_active');
-    await C.still('10_new_route_active');
     await C.scrollThrough(C.railScroller(), { passes: 1, stepMs: 200 });
   },
 
@@ -582,6 +597,7 @@ async function warmUp(C, mark, log2) {
     t('app booted');
 
     await clickAt(page.getByRole('tab', { name: 'LIVE' }), { settle: 0.4, label: 'LIVE (warm)' });
+    await waitText('LATEST ANALYSIS', 150000);
     await waitText('Named bergs in area', 150000);
     t('live feeds loaded');
 

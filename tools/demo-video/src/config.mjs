@@ -28,8 +28,8 @@ export const SERVICES = {
 };
 
 export const VIDEO = {
-  width: 1600,
-  height: 900,
+  width: 1280,
+  height: 720,
   fps: 30,
   crf: 19,
   shareWidth: 1280,

@@ -1,7 +1,7 @@
 /**
  * Assembler — turn the recorded take + narration clips into the deliverables:
  *
- *   docs/video/Dakshin-Marg-demo.mp4         master (1600×900, 30 fps, narrated)
+ *   docs/video/Dakshin-Marg-demo.mp4         master (1280×720, 30 fps, narrated)
  *   docs/video/Dakshin-Marg-demo-720p.mp4    shareable cut (1280×720)
  *   docs/video/Dakshin-Marg-narration.mp3    voice track only
  *   docs/video/Dakshin-Marg-demo.srt         subtitles, paced from the real audio
@@ -113,8 +113,9 @@ export async function assemble({ script, chromium: chr, share = true, keepBuild 
   const cues = Object.fromEntries((tl.cues ?? []).map((c) => [c.name, c.t]));
   const takeStart = cues.take_start;
   if (takeStart === undefined) throw new Error('timeline has no take_start cue');
+  const takePad = Number(process.env.DM_TAKE_PAD ?? 0);   // extra seconds trimmed off the take head
 
-  const take = newestWebm();
+  const take = (tl.takeFile && existsSync(tl.takeFile)) ? tl.takeFile : newestWebm();
   if (!take) throw new Error(`no recording in ${join(WORK, 'video')} — run the record step first`);
   log.info(`take: ${take} (${(statSync(take).size / 1e6).toFixed(1)} MB)`);
 
@@ -123,7 +124,7 @@ export async function assemble({ script, chromium: chr, share = true, keepBuild 
   if (missing.length) log.warn(`no audio for: ${missing.map((a) => a.id).join(', ')} (these acts stay silent)`);
 
   /* cards */
-  const cards = await renderCards({ chromium: chr, script });
+  const cards = await renderCards({ chromium: chr, script, width: 1600, height: 900 });  // cards are laid out for 1600×900; segments downscale
   const titleDur = Math.max(script.cards?.titleSeconds ?? 5, (durations['00_title'] ?? 0) + 1.6);
 
   /* narration placement */
@@ -138,7 +139,7 @@ export async function assemble({ script, chromium: chr, share = true, keepBuild 
     else {
       const cue = cues[`${act.id}_cue`];
       if (cue === undefined) { log.warn(`act ${act.id} has no recorded cue — skipping its narration`); continue; }
-      start = titleDur + (cue - takeStart) + OFFSET;
+      start = Math.max(titleDur + 0.3, titleDur + (cue - takeStart - takePad) + OFFSET);
     }
     placements.push({ id: act.id, file, start, duration: dur, text: act.text });
   }
@@ -164,7 +165,7 @@ export async function assemble({ script, chromium: chr, share = true, keepBuild 
   }
 
   /* video segments */
-  const takeDur = Math.max(1, (tl.total ?? 0) - takeStart + 2.5);
+  const takeDur = Math.max(1, (tl.total ?? 0) - takeStart + 2.5 - takePad);
   const buildDir = join(WORK, 'build');
   mkdirSync(buildDir, { recursive: true });
 
@@ -173,7 +174,8 @@ export async function assemble({ script, chromium: chr, share = true, keepBuild 
     '-c:v', 'libx264', '-preset', 'medium', '-crf', String(VIDEO.crf), '-an',
     join(buildDir, '01_title.mp4')], 'title card');
 
-  ff(['-ss', `${Math.max(0, takeStart - 1.0).toFixed(2)}`, '-i', take, '-t', `${takeDur.toFixed(2)}`,
+  const capFirst = tl.capture?.firstFrameMy ?? 0;   // take-file time of the session clock zero
+  ff(['-ss', `${Math.max(0, takeStart - 1.0 - capFirst + takePad).toFixed(2)}`, '-i', take, '-t', `${takeDur.toFixed(2)}`,
     '-vf', `fps=${VIDEO.fps},scale=${VIDEO.width}:${VIDEO.height}:force_original_aspect_ratio=decrease,pad=${VIDEO.width}:${VIDEO.height}:(ow-iw)/2:(oh-ih)/2,format=yuv420p`,
     '-c:v', 'libx264', '-preset', 'veryfast', '-crf', String(VIDEO.crf), '-an',
     join(buildDir, '02_take.mp4')], 'take segment');

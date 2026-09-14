@@ -1,6 +1,6 @@
 # Dakshin Marg — SIH demo video (generated from the running system)
 
-**Master:** `Dakshin-Marg-demo.mp4` — 1600×900, 30 fps, narrated (kept out of Git: too large)
+**Master:** `Dakshin-Marg-demo.mp4` — 1280×720, 30 fps, narrated (kept out of Git: too large)
 **Shareable:** `Dakshin-Marg-demo-720p.mp4` — 1280×720, 30 fps, narrated (committed)
 **Narration only:** `Dakshin-Marg-narration.mp3` · **Subtitles:** `Dakshin-Marg-demo.srt`
 **Stills for the pitch deck:** `stills/01…10.jpg`
@@ -75,3 +75,14 @@ See [`../../tools/demo-video/README.md`](../../tools/demo-video/README.md) for
 the whole pipeline: tool resolution, the TTS provider chain (edge-tts → OpenAI →
 ElevenLabs → Piper → Windows SAPI → espeak → bundled clips), the warm-up model,
 and how to edit the film by editing `tools/demo-video/narration.json`.
+
+## Recording pipeline
+
+`make-demo.sh` records the take with a CDP screencast: every frame carries its
+true timestamp, so periods where the software-GL renderer is busy become frozen
+frames instead of lost time (Playwright's webm recorder dropped frames and
+desynced the narration). A span gate aborts the run if the captured frame span
+does not match the session clock. The heavy warm-up runs in a throwaway,
+never-recorded browser context; the recorded page opens already in LIVE mode
+(the prologue gates on the analysis stamp showing a real feed date).
+`DM_TAKE_PAD=<s>` trims extra seconds off the take head at assemble time.

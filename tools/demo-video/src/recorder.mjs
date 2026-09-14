@@ -12,7 +12,8 @@
  *   node src/recorder.mjs --url=http://localhost:5173   (record)
  *   … --dry                                             (screenshots only)
  */
-import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, existsSync, readFileSync, readdirSync, statSync, rmSync, appendFileSync } from 'node:fs';
+import { execFile } from 'node:child_process';
 import { join } from 'node:path';
 // playwright-core is imported lazily so preflight can install it first
 import { FILES, STILLS, VIDEO, WORK, ensureDirs, makeLogger } from './config.mjs';
@@ -97,6 +98,7 @@ export async function recordTake(opts) {
 
   let videoT0 = Date.now();
   const cues = [];
+  let FFMPEG_BIN = 'ffmpeg';
   const rel = () => (Date.now() - videoT0) / 1000;
   const mark = (name) => {
     const t = Number(rel().toFixed(2));
@@ -110,89 +112,142 @@ export async function recordTake(opts) {
   if (record) {
     // Playwright's video recorder needs an ffmpeg inside its own registry
     const ff = resolveFfmpeg({ install: false });
-    if (ff.ok) ensurePlaywrightFfmpeg(ff.ffmpeg);
+    if (ff.ok) { ensurePlaywrightFfmpeg(ff.ffmpeg); FFMPEG_BIN = ff.ffmpeg; }
   }
+  const initPage = async (pg) => {
+    pg.on('pageerror', () => {});
+    pg.on('dialog', (d) => d.dismiss().catch(() => {}));
+    await pg.addInitScript((theme) => { window.__DM_THEME = theme; }, opts.theme ?? process.env.DM_THEME ?? 'dark');
+    await pg.addInitScript(CURSOR_JS);
+    return pg;
+  };
+
+  /* ── helpers handed to every step ─────────────────────────────────────── */
+  /** Helper closures bound to one page; the warm-up page and the recorded
+   *  take page each get their own set. */
+  const makeHelpers = (pg) => {
+    const sleep = (s) => pg.waitForTimeout(Math.max(0, s * 1000));
+    const rail = () => pg.locator('.dss-right-rail');
+    const railScroller = () => pg.locator('.dss-right-rail > div').first();
+    const leftScroller = () => pg.locator('.dss-left-rail > div').first();
+    const btn = (name) => pg.getByRole('button', { name });
+    const waitText = (t, ms = 25000) => pg.waitForSelector(`text=${t}`, { timeout: ms }).catch(() => null);
+    const waitBtn = (name, ms = 90000) => btn(name).first().waitFor({ state: 'visible', timeout: ms }).catch(() => null);
+    const section = async (id, settle = 0.9) => {
+      const b = pg.locator(`button[data-section="${id}"]`).first();
+      if (await b.count() === 0) { log.warn(`    nav section ${id} not found`); return false; }
+      await b.scrollIntoViewIfNeeded({ timeout: 5000 }).catch(() => {});
+      const box = await b.boundingBox().catch(() => null);
+      if (box) await pg.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 8 });
+      await b.click({ timeout: 8000 }).catch(() => {});
+      await sleep(settle);
+      return true;
+    };
+    const shot = async (name) => {
+      if (!shotsOn) return null;             // screenshots cost ~9 s each here; debug-only
+      const p = join(WORK, 'shots', `${name}.png`);
+      await pg.screenshot({ path: p }).catch(() => {});
+      return p;
+    };
+    const still = async (name) => {
+      if (!stills) return;
+      const p = join(STILLS, `${name}.jpg`);
+      await pg.screenshot({ path: p, type: 'jpeg', quality: 88 }).catch(() => {});
+    };
+
+    async function glide(x, y, steps = 8) {
+      await pg.mouse.move(x, y, { steps }).catch(() => {});
+      await pg.waitForTimeout(160);
+    }
+    async function clickAt(locator, { steps = 8, settle = 0.4, label, timeout = 15000 } = {}) {
+      await locator.scrollIntoViewIfNeeded({ timeout: 6000 }).catch(() => {});
+      const box = await locator.boundingBox({ timeout }).catch(() => null);
+      if (!box) throw new Error(`no bounding box for ${label ?? 'locator'}`);
+      await glide(box.x + box.width / 2, box.y + box.height / 2, steps);
+      await locator.click({ timeout });
+      await sleep(settle);
+    }
+    const railScroll = async (text, settle = 0.45) => {
+      await rail().getByText(text, { exact: false }).first().scrollIntoViewIfNeeded({ timeout: 8000 }).catch(() => {});
+      await sleep(settle);
+    };
+    /** Slow, readable scroll of a panel from top to bottom and back. */
+    async function scrollThrough(locator, { passes = 1, stepMs = 220 } = {}) {
+      const el = locator.first();
+      if (await el.count() === 0) return;
+      await el.evaluate((n) => { n.scrollTop = 0; }).catch(() => {});
+      await sleep(0.3);
+      for (let p = 0; p < passes; p += 1) {
+        const h = await el.evaluate((n) => Math.max(0, n.scrollHeight - n.clientHeight)).catch(() => 0);
+        if (!h) return;
+        const steps = Math.max(4, Math.min(26, Math.round(h / 130)));
+        for (let i = 1; i <= steps; i += 1) {
+          await el.evaluate((n, y) => { n.scrollTop = y; }, Math.round((h * i) / steps)).catch(() => {});
+          await pg.waitForTimeout(stepMs);
+        }
+        if (p + 1 < passes) {
+          await el.evaluate((n) => { n.scrollTop = 0; }).catch(() => {});
+          await sleep(0.4);
+        }
+      }
+    }
+    return { sleep, rail, railScroller, leftScroller, btn, waitText, waitBtn, section, shot, still, glide, clickAt, railScroll, scrollThrough };
+  };
+
+  /* ── warm-up in a throwaway context: never recorded ────────────────────── */
+  if (warm) {
+    const wctx = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1 });
+    const wpage = await initPage(await wctx.newPage());
+    await warmUp({ ...makeHelpers(wpage), page: wpage, url }, mark, log);
+    await wctx.close().catch(() => {});
+    log.info('  warm context closed — recording context starts clean');
+  }
+
+  const recOrigin = rel();   // session clock at recording start (take file t=0 ≈ this)
   const ctx = await browser.newContext({
     viewport: { width, height },
     deviceScaleFactor: 1,
-    ...(record ? { recordVideo: { dir: join(WORK, 'video'), size: { width, height } } } : {}),
+    ...(record && process.env.DM_LEGACY_WEBM === '1' ? { recordVideo: { dir: join(WORK, 'video'), size: { width, height } } } : {}),
   });
-  const page = await ctx.newPage();
-  page.on('pageerror', () => {});
-  page.on('dialog', (d) => d.dismiss().catch(() => {}));
-  await page.addInitScript((theme) => { window.__DM_THEME = theme; }, opts.theme ?? process.env.DM_THEME ?? 'dark');
-  await page.addInitScript(CURSOR_JS);
+  const page = await initPage(await ctx.newPage());
 
-  /* ── helpers handed to every step ─────────────────────────────────────── */
-  const sleep = (s) => page.waitForTimeout(Math.max(0, s * 1000));
-  const rail = () => page.locator('.dss-right-rail');
-  const railScroller = () => page.locator('.dss-right-rail > div').first();
-  const leftScroller = () => page.locator('.dss-left-rail > div').first();
-  const btn = (name) => page.getByRole('button', { name });
-  const waitText = (t, ms = 25000) => page.waitForSelector(`text=${t}`, { timeout: ms }).catch(() => null);
-  const waitBtn = (name, ms = 90000) => btn(name).first().waitFor({ state: 'visible', timeout: ms }).catch(() => null);
-  const section = async (id, settle = 0.9) => {
-    const b = page.locator(`button[data-section="${id}"]`).first();
-    if (await b.count() === 0) { log.warn(`    nav section ${id} not found`); return false; }
-    await b.scrollIntoViewIfNeeded({ timeout: 5000 }).catch(() => {});
-    const box = await b.boundingBox().catch(() => null);
-    if (box) await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 8 });
-    await b.click({ timeout: 8000 }).catch(() => {});
-    await sleep(settle);
-    return true;
-  };
-  const shot = async (name) => {
-    if (!shotsOn) return null;             // screenshots cost ~9 s each here; debug-only
-    const p = join(WORK, 'shots', `${name}.png`);
-    await page.screenshot({ path: p }).catch(() => {});
-    return p;
-  };
-  const still = async (name) => {
-    if (!stills) return;
-    const p = join(STILLS, `${name}.jpg`);
-    await page.screenshot({ path: p, type: 'jpeg', quality: 88 }).catch(() => {});
-  };
-
-  async function glide(x, y, steps = 8) {
-    await page.mouse.move(x, y, { steps }).catch(() => {});
-    await page.waitForTimeout(160);
-  }
-  async function clickAt(locator, { steps = 8, settle = 0.4, label, timeout = 15000 } = {}) {
-    await locator.scrollIntoViewIfNeeded({ timeout: 6000 }).catch(() => {});
-    const box = await locator.boundingBox({ timeout }).catch(() => null);
-    if (!box) throw new Error(`no bounding box for ${label ?? 'locator'}`);
-    await glide(box.x + box.width / 2, box.y + box.height / 2, steps);
-    await locator.click({ timeout });
-    await sleep(settle);
-  }
-  const railScroll = async (text, settle = 0.45) => {
-    await rail().getByText(text, { exact: false }).first().scrollIntoViewIfNeeded({ timeout: 8000 }).catch(() => {});
-    await sleep(settle);
-  };
-  /** Slow, readable scroll of a panel from top to bottom and back. */
-  async function scrollThrough(locator, { passes = 1, stepMs = 220 } = {}) {
-    const el = locator.first();
-    if (await el.count() === 0) return;
-    await el.evaluate((n) => { n.scrollTop = 0; }).catch(() => {});
-    await sleep(0.3);
-    for (let p = 0; p < passes; p += 1) {
-      const h = await el.evaluate((n) => Math.max(0, n.scrollHeight - n.clientHeight)).catch(() => 0);
-      if (!h) return;
-      const steps = Math.max(4, Math.min(26, Math.round(h / 130)));
-      for (let i = 1; i <= steps; i += 1) {
-        await el.evaluate((n, y) => { n.scrollTop = y; }, Math.round((h * i) / steps)).catch(() => {});
-        await page.waitForTimeout(stepMs);
-      }
-      if (p + 1 < passes) {
-        await el.evaluate((n) => { n.scrollTop = 0; }).catch(() => {});
-        await sleep(0.4);
-      }
-    }
+  /* ── capture: CDP screencast with true timestamps ────────────────────────
+   * Playwright's webm recorder drops frames when the software-GL canvas gets
+   * busy, which compresses its timeline and desyncs the narration. The
+   * screencast gives every frame an epoch timestamp, so gaps become frozen
+   * frames instead of lost time. */
+  let screencast = null;
+  const frameTs = [];
+  const framesDir = join(WORK, 'frames');
+  if (record && process.env.DM_LEGACY_WEBM !== '1') {
+    rmSync(framesDir, { recursive: true, force: true });
+    mkdirSync(framesDir, { recursive: true });
+    screencast = await ctx.newCDPSession(page);
+    let n = 0;
+    let last = 0;
+    screencast.on('Page.screencastFrame', (ev) => {
+      const ts = ev.metadata?.timestamp || Date.now() / 1000;
+      screencast.send('Page.screencastFrameAck', { sessionId: ev.sessionId }).catch(() => {});
+      if (ts - last < 1 / 15 - 1e-4) return;   // cap at 15 fps
+      last = ts;
+      frameTs.push(ts);
+      const idx = n++;
+      appendFileSync(join(framesDir, 'ts.log'), `${idx}\t${ts.toFixed(4)}\n`);
+      writeFileSync(join(framesDir, `${String(idx).padStart(6, '0')}.jpg`), Buffer.from(ev.data, 'base64'));
+    });
+    await screencast.send('Page.startScreencast', {
+      format: 'jpeg', quality: 62, maxWidth: width, maxHeight: height, everyNthFrame: 1,
+    });
+    log.info(`  screencast capture (≤15 fps, true timestamps) → work/frames`);
   }
 
+  const H = makeHelpers(page);
+  const {
+    sleep, rail, railScroller, leftScroller, btn, waitText, waitBtn, section, shot, still,
+    glide, clickAt, railScroll, scrollThrough,
+  } = H;
   const C = {
-    page, sleep, rail, railScroller, leftScroller, btn, waitText, waitBtn, section, shot, still,
-    glide, clickAt, railScroll, scrollThrough, mark, until, log, url, width, height,
+    page, ...H, mark, until, log, url, width, height,
   };
 
   /** Hold the act for at least its narration length (+ slack). */
@@ -201,9 +256,6 @@ export async function recordTake(opts) {
     const target = cueT + Math.max(act.holdSeconds ?? 0, audio + slack);
     await until(target);
   };
-
-  /* ── warm-up: everything heavy happens here, off camera ───────────────── */
-  if (warm) await warmUp(C, mark, log);
 
   /* ── the take ─────────────────────────────────────────────────────────── */
   const errors = [];
@@ -217,10 +269,16 @@ export async function recordTake(opts) {
     // gate on a LIVE-only signal (the top-bar analysis stamp), retrying the
     // tab click once in case the boot overlay swallowed the first one
     await clickAt(page.getByRole('tab', { name: 'LIVE' }), { settle: 0.6, label: 'LIVE tab (prologue)' }).catch(() => {});
-    if (!await waitText('LATEST ANALYSIS', 25000)) {
+    // the stamp LABEL renders the instant the tab flips; only its DATE proves the
+    // feeds actually landed, so gate on that (retrying the click once)
+    const feedsSettled = (ms) => page.waitForFunction(
+      () => /LATEST ANALYSIS\s*\n\s*20\d\d-\d\d-\d\d/.test(document.body.innerText),
+      null, { timeout: ms },
+    ).then(() => true).catch(() => false);
+    if (!await feedsSettled(25000)) {
       await clickAt(page.getByRole('tab', { name: 'LIVE' }), { settle: 0.6, label: 'LIVE tab (retry)' }).catch(() => {});
     }
-    await waitText('LATEST ANALYSIS', 120000);
+    await feedsSettled(120000);
     await waitText('Named bergs in area', 60000);
     await sleep(1.5);
     mark('take_start');
@@ -267,6 +325,67 @@ export async function recordTake(opts) {
     if (errors.length) log.warn(`${errors.length} act(s) reported errors: ${errors.map((e) => e.act).join(', ')}`);
     await ctx.close();
     await browser.close();
+    if (record && screencast) {
+      await screencast.send('Page.stopScreencast').catch(() => {});
+      const tsLog = join(framesDir, 'ts.log');
+      if (existsSync(tsLog)) {
+        const rows = readFileSync(tsLog, 'utf8').trim().split('\n').map((l) => Number(l.split('\t')[1]));
+        if (rows.length) frameTs.length = 0, frameTs.push(...rows);
+      }
+      const firstMy = frameTs.length ? (frameTs[0] * 1000 - videoT0) / 1000 : recOrigin;
+      const dur = frameTs.length ? frameTs[frameTs.length - 1] - frameTs[0] : 0;
+      const expect = total - firstMy;
+      const span = { expected: Number(expect.toFixed(2)), recorded: Number(dur.toFixed(2)), frames: frameTs.length };
+      if (frameTs.length < 50 || Math.abs(dur - expect) > 5) {
+        const tl = JSON.parse(readFileSync(FILES.timeline, 'utf8'));
+        writeFileSync(FILES.timeline, JSON.stringify({ ...tl, span }, null, 2));
+        log.err(`capture span drift: ${dur.toFixed(1)}s of frames vs expected ${expect.toFixed(1)}s — aborting before assemble`);
+        throw new Error('capture span drift');
+      }
+      // encode the frames honouring their true timestamps (gaps freeze)
+      const lines = [];
+      for (let i = 0; i < frameTs.length - 1; i += 1) {
+        lines.push(`file '${join(framesDir, `${String(i).padStart(6, '0')}.jpg`)}'`);
+        lines.push(`duration ${(frameTs[i + 1] - frameTs[i]).toFixed(4)}`);
+      }
+      const lastF = join(framesDir, `${String(frameTs.length - 1).padStart(6, '0')}.jpg`);
+      lines.push(`file '${lastF}'`, 'duration 0.6000', `file '${lastF}'`);
+      const list = join(framesDir, 'list.txt');
+      writeFileSync(list, lines.join('\n'));
+      const out = join(WORK, 'video', 'take_cdp.mp4');
+      await new Promise((res, rej) => {
+        execFile(FFMPEG_BIN, ['-y', '-f', 'concat', '-safe', '0', '-i', list,
+          '-vf', 'fps=30,format=yuv420p', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '19', out],
+        { timeout: 900000, maxBuffer: 1 << 26 }, (e) => (e ? rej(e) : res()));
+      });
+      rmSync(framesDir, { recursive: true, force: true });
+      const tl = JSON.parse(readFileSync(FILES.timeline, 'utf8'));
+      writeFileSync(FILES.timeline, JSON.stringify({
+        ...tl, span, takeFile: out,
+        capture: { kind: 'screencast', origin: Number(recOrigin.toFixed(2)), firstFrameMy: Number(firstMy.toFixed(2)), frames: frameTs.length },
+      }, null, 2));
+      log.ok(`capture span ok — ${frameTs.length} frames, ${dur.toFixed(1)}s (expected ${expect.toFixed(1)}s) → ${out}`);
+    } else if (record) {
+      // legacy webm path: integrity gate on its duration
+      const dir = join(WORK, 'video');
+      const vids = readdirSync(dir).filter((f) => f.endsWith('.webm'))
+        .map((f) => join(dir, f)).sort((a, b) => statSync(b).mtimeMs - statSync(a).mtimeMs);
+      const dur = await new Promise((res) => {
+        if (!vids.length) return res(null);
+        execFile(FFMPEG_BIN, ['-i', vids[0]], { timeout: 30000 }, (e, out, err) => {
+          const m = /Duration: (\d+):(\d+):(\d+\.\d+)/.exec(err || out || '');
+          res(m ? Number(m[1]) * 3600 + Number(m[2]) * 60 + Number(m[3]) : null);
+        });
+      });
+      const span = { expected: Number((total - recOrigin).toFixed(2)), recorded: dur };
+      const tl0 = JSON.parse(readFileSync(FILES.timeline, 'utf8'));
+      writeFileSync(FILES.timeline, JSON.stringify({ ...tl0, span, capture: { kind: 'webm', origin: Number(recOrigin.toFixed(2)), firstFrameMy: Number(recOrigin.toFixed(2)) } }, null, 2));
+      if (dur == null || Math.abs(dur - (total - recOrigin)) > 5) {
+        log.err(`recording span drift: webm ${dur ?? '?'}s vs session ${total.toFixed(1)}s — the recorder dropped frames; aborting before assemble`);
+        throw new Error('recording span drift');
+      }
+      log.ok(`recording span ok — webm ${dur.toFixed(1)}s vs session ${total.toFixed(1)}s`);
+    }
   }
 
   return { timeline: FILES.timeline, total: rel(), errors };

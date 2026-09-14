@@ -1,4 +1,4 @@
-"""POLARIS-X sea-ice intelligence pipeline.
+"""Dakshin Marg sea-ice intelligence pipeline.
 
 DATA (inspected 2026-09-02 before model selection):
   · 8 daily NSIDC Sea Ice Index v4 observation days (2026-08-25 … 09-01)

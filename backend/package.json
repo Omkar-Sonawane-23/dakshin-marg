@@ -1,9 +1,9 @@
 {
-  "name": "polaris-x-backend",
+  "name": "dakshin-marg-backend",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "POLARIS-X application API — Node/Express/TS orchestration layer between the React UI and Python scientific services.",
+  "description": "Dakshin Marg application API — Node/Express/TS orchestration layer between the React UI and Python scientific services.",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",

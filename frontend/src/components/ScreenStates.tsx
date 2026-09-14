@@ -32,7 +32,7 @@ export function LoadingScreen() {
               }}
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="font-data text-[9px] tracking-[0.3em] text-accent">POLARIS</span>
+              <span className="font-data text-[8px] tracking-[0.18em] text-accent">DAKSHIN MARG</span>
             </div>
           </div>
           <div className="absolute mt-[150px] text-center">

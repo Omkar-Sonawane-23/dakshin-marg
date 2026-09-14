@@ -1,9 +1,9 @@
-POLARIS-X — TELEPROMPTER NARRATION ONLY (no stage directions)
+Dakshin Marg — TELEPROMPTER NARRATION ONLY (no stage directions)
 Total run time ≈ 6:45. Pauses are marked with //. Read the number you SEE on screen if it differs.
 
 ──────────────────────────────────────────────────────
 [0:00] SHOT 1 — cold open on the polar chart
-Every austral summer, India's research stations are resupplied through Antarctic sea ice — where the ice charts are days old, icebergs move, and the ice edge can shift overnight. POLARIS-X turns open satellite and model data into a risk picture, route options, and a re-planning decision — and it keeps the human in command at every step. //
+Every austral summer, India's research stations are resupplied through Antarctic sea ice — where the ice charts are days old, icebergs move, and the ice edge can shift overnight. Dakshin Marg turns open satellite and model data into a risk picture, route options, and a re-planning decision — and it keeps the human in command at every step. //
 
 [0:22] SHOT 2 — LIVE mode
 This is the running system, in LIVE mode. Everything on screen is computed from real datasets — NSIDC sea-ice concentration, USNIC iceberg positions, BYU and NIC iceberg tracks, and Open-Meteo wind and temperature. No API keys, no invented data. //
@@ -42,7 +42,7 @@ For the finale, a repeatable drill. It simulates exactly one fact — iceberg D2
 Accept the recommended route. Twenty-four hours at cruise speed: three hundred miles covered — then the simulated re-sighting arrives, and D23 is inside the corridor. The remaining leg goes from LOW to CRITICAL, with a closest approach of two and a half kilometres. Re-planning recommends CONSERVATIVE: five hundred and ninety-two miles, all LOW — twenty-five miles longer than staying put. The why-changed panel gives four reasons, including that the old line would keep one point four percent of the route in critical severity. I accept it — and the new route becomes active. //
 
 [6:15] SHOT 14 — Close
-One thing on honesty, because it matters for a decision-support system. Everything in this demo is real open data and real math, with exactly one labelled simulated fact — the berg re-sighting. The system refuses dates outside the data window, refuses horizons beyond seventy-two hours, and reports no safe route when there is not one. POLARIS-X predicts, assesses and recommends. The officer on the bridge decides. Thank you.
+One thing on honesty, because it matters for a decision-support system. Everything in this demo is real open data and real math, with exactly one labelled simulated fact — the berg re-sighting. The system refuses dates outside the data window, refuses horizons beyond seventy-two hours, and reports no safe route when there is not one. Dakshin Marg predicts, assesses and recommends. The officer on the bridge decides. Thank you.
 
 ──────────────────────────────────────────────────────
 OPTIONAL BRIDGING LINES (used in the generated video; not needed for a live 8-minute delivery)
@@ -53,5 +53,5 @@ The optimizer then runs on the risk surface resolved for that departure time: on
 each one either a feasible plan or an honest refusal.
 
 [over the end card]
-POLARIS-X predicts, assesses and recommends — from real open data, with every product labelled by its source.
+Dakshin Marg predicts, assesses and recommends — from real open data, with every product labelled by its source.
 The officer on the bridge decides.

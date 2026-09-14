@@ -1,4 +1,4 @@
-# Scientific Method — POLARIS-X
+# Scientific Method — Dakshin Marg
 
 ## Honesty Principle
 Every number is either measured, computed from a documented formula over measured inputs, or labelled as an assumption. No fabrication.

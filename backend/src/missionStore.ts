@@ -103,8 +103,8 @@ async function tryMongo(): Promise<Backend | null> {
       connectTimeoutMS: 1500,
     });
     await client.connect();
-    await client.db('polaris_x').command({ ping: 1 });
-    const col = client.db('polaris_x').collection<MissionDoc>('missions');
+    await client.db('dakshin_marg').command({ ping: 1 });
+    const col = client.db('dakshin_marg').collection<MissionDoc>('missions');
     return {
       kind: 'mongodb',
       async list() { return col.find({}, { projection: { _id: 0 } }).toArray(); },

@@ -2,16 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2346cfe4' stroke-width='1.4'/%3E%3Cpath d='M12 5 L17 15 L7 15 Z' fill='none' stroke='%23eaf6ff' stroke-width='1.5'/%3E%3C/svg%3E" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2346cfe4' stroke-width='1.4'/%3E%3Cpath d='M12 5.5V16.5M8 13l4 5 4-5' fill='none' stroke='%23eaf6ff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>POLARIS-X · Antarctic Navigation Decision Support</title>
+    <title>DAKSHIN MARG · Antarctic Navigation Decision Support</title>
     <script>
       // Apply theme before first paint (no flash). Persisted choice wins;
       // otherwise follow the OS preference. Kept inline and tiny on purpose.
       (function () {
         try {
-          var t = localStorage.getItem('polaris-theme');
-          if (t !== 'light' && t !== 'dark') {
+          var t = localStorage.getItem('dakshin-marg-theme');
+          // pre-rename key (product was POLARIS-X) — honour it, migrate below
+          if (t !== 'light' && t !== 'dark') t = localStorage.getItem('polaris-theme');
+          if (t === 'light' || t === 'dark') {
+            localStorage.setItem('dakshin-marg-theme', t);
+            localStorage.removeItem('polaris-theme');
+          } else {
             t = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
           }
           document.documentElement.dataset.theme = t;

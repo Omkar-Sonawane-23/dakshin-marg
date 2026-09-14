@@ -127,7 +127,7 @@ export default function NavRail({ section, onSection, onCommand }: { section: Se
             <div className="label-xs mb-1.5">Offline</div>
             <p className="text-[9.5px] text-ink-faint leading-snug m-0">When offline, cached SIC, bergs, routes and maps remain available. Data age is shown on every product. Sync resumes on reconnect.</p>
             <div className="hairline my-2" />
-            <p className="text-[9.5px] text-ink-faint leading-snug m-0">POLARIS-X is decision support. Routes, risk and forecasts are recommendations — the navigation decision stays with the operator.</p>
+            <p className="text-[9.5px] text-ink-faint leading-snug m-0">Dakshin Marg is decision support. Routes, risk and forecasts are recommendations — the navigation decision stays with the operator.</p>
           </div>
         )}
       </div>

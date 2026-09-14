@@ -1,4 +1,4 @@
-# POLARIS-X — System Architecture (as built)
+# Dakshin Marg — System Architecture (as built)
 
 **Project:** AI-Enabled Antarctic Sea-Ice, Iceberg Trajectory & Navigation Decision Support System
 **Org:** Ministry of Earth Sciences (MoES) / NCPOR — Smart India Hackathon prototype
@@ -80,7 +80,7 @@ HUMAN OPERATOR — final decision authority
 ## 3. Repository Layout
 
 ```
-polaris-x/
+dakshin-marg/
 ├── frontend/           React + TS + Vite + Tailwind (custom map in src/components/map/)
 ├── backend/            Node + Express + TS application API
 ├── python-services/    FastAPI env_data package (ingest, models, risk, optimizer, drill)

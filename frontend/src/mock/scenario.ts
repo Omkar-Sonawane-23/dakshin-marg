@@ -1,5 +1,5 @@
 /**
- * POLARIS-X — Deterministic demo scenario generator.
+ * Dakshin Marg — Deterministic demo scenario generator.
  *
  * ══════════════════════════════════════════════════════════════════════
  *  EVERYTHING PRODUCED HERE IS **SIMULATED / DEMO DATA**.

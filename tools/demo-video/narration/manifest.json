@@ -1,0 +1,152 @@
+{
+  "clips": {
+    "00_title": {
+      "file": "00_title.mp3",
+      "hash": "d79b1aacc364ac91",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 16.49,
+      "at": "2026-09-14T15:45:38.869Z"
+    },
+    "01_open": {
+      "file": "01_open.mp3",
+      "hash": "6bba56c9cb679e52",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 24.98,
+      "at": "2026-09-14T15:45:42.862Z"
+    },
+    "02_live": {
+      "file": "02_live.mp3",
+      "hash": "a0e0045c1c625e0a",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 22.56,
+      "at": "2026-09-14T15:45:45.959Z"
+    },
+    "03_tour_plan": {
+      "file": "03_tour_plan.mp3",
+      "hash": "82db0e8a36b03cde",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 22.2,
+      "at": "2026-09-14T15:45:49.029Z"
+    },
+    "04_tour_env": {
+      "file": "04_tour_env.mp3",
+      "hash": "f2840d4c8fa93c83",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 27.1,
+      "at": "2026-09-14T15:45:52.271Z"
+    },
+    "05_tour_ops": {
+      "file": "05_tour_ops.mp3",
+      "hash": "cb7a1036ba4dff22",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 20.83,
+      "at": "2026-09-14T15:45:55.822Z"
+    },
+    "06_seaice": {
+      "file": "06_seaice.mp3",
+      "hash": "fcc54325a4eb93f7",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 38.04,
+      "at": "2026-09-14T15:46:01.212Z"
+    },
+    "07_icebergs": {
+      "file": "07_icebergs.mp3",
+      "hash": "690e18393a4b733b",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 26.78,
+      "at": "2026-09-14T15:46:04.416Z"
+    },
+    "08_risk": {
+      "file": "08_risk.mp3",
+      "hash": "17987e3c52253d39",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 42.89,
+      "at": "2026-09-14T15:46:09.175Z"
+    },
+    "09_routes": {
+      "file": "09_routes.mp3",
+      "hash": "a124d72fa4379ff1",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 41.38,
+      "at": "2026-09-14T15:46:16.715Z"
+    },
+    "10_mission": {
+      "file": "10_mission.mp3",
+      "hash": "c7d1914d6f705e19",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 34.8,
+      "at": "2026-09-14T15:46:20.423Z"
+    },
+    "10b_bridge": {
+      "file": "10b_bridge.mp3",
+      "hash": "658974c8d59de6e8",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 21,
+      "at": "2026-09-14T15:46:23.365Z"
+    },
+    "11_accept": {
+      "file": "11_accept.mp3",
+      "hash": "5c852e9fa93da8fc",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 25.1,
+      "at": "2026-09-14T15:46:26.801Z"
+    },
+    "12_underway": {
+      "file": "12_underway.mp3",
+      "hash": "a211084e232cebfd",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 25.82,
+      "at": "2026-09-14T15:46:29.956Z"
+    },
+    "13_review": {
+      "file": "13_review.mp3",
+      "hash": "0ae7f843d8584867",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 40.3,
+      "at": "2026-09-14T15:46:35.746Z"
+    },
+    "14_drill_setup": {
+      "file": "14_drill_setup.mp3",
+      "hash": "a79083f4ee3a5adf",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 25.63,
+      "at": "2026-09-14T15:46:39.968Z"
+    },
+    "15_drill": {
+      "file": "15_drill.mp3",
+      "hash": "70ffe6e074dc126d",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 30.72,
+      "at": "2026-09-14T15:46:44.256Z"
+    },
+    "16_close": {
+      "file": "16_close.mp3",
+      "hash": "c1ff96ec5fe95a37",
+      "provider": "edge-tts",
+      "voice": "en-IN-NeerjaNeural",
+      "duration": 35.3,
+      "at": "2026-09-14T15:46:48.230Z"
+    }
+  },
+  "provider": "edge-tts",
+  "voice": "en-IN-NeerjaNeural",
+  "product": "Dakshin Marg",
+  "updated": "2026-09-14T16:14:00.993Z"
+}

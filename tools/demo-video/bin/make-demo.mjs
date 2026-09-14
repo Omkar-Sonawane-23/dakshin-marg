@@ -130,7 +130,9 @@ async function main() {
 
   /* 3 · services */
   let running = null;
-  const url = OPTS.url ?? `http://localhost:${OPTS.frontend === 'preview' ? 4173 : 5173}/`;
+  // The root route is the reviewer-facing showcase; the recorder needs the
+  // working mission console so the existing shot list remains deterministic.
+  const url = OPTS.url ?? `http://localhost:${OPTS.frontend === 'preview' ? 4173 : 5173}/console`;
   if (want('services') && !OPTS.url) {
     running = await startServices({ frontend: OPTS.frontend });
     await warmCaches();

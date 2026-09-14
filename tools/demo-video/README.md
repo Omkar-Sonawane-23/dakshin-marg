@@ -119,7 +119,7 @@ Useful invocations:
 ```bash
 ./make-demo.sh --dry                    # rehearsal: screenshots, no encode (~2 min/act-group)
 ./make-demo.sh --only=narration         # just (re)synthesise the voice
-./make-demo.sh --only=record --url=http://localhost:5173/   # record an app you started yourself
+./make-demo.sh --only=record --url=http://localhost:5173/console   # record the working console you started yourself
 ./make-demo.sh --only=assemble          # re-cut from the last recording
 ./make-demo.sh --tts=edge-tts --voice=en-IN-NeerjaNeural
 ./make-demo.sh --tts=openai --voice=nova

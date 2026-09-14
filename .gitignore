@@ -35,7 +35,3 @@ tools/demo-video/.extras/
 docs/video/Dakshin-Marg-demo.mp4
 docs/video/Dakshin-Marg-narration.mp3
 docs/video/audio/
-
-# Pre-rename artefacts (kept out of the tree; regenerate with ./make-demo.sh)
-docs/video/POLARIS-X-demo.mp4
-docs/video/POLARIS-X-narration.mp3

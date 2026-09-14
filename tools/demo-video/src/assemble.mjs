@@ -175,7 +175,7 @@ export async function assemble({ script, chromium: chr, share = true, keepBuild 
 
   ff(['-ss', `${Math.max(0, takeStart - 1.0).toFixed(2)}`, '-i', take, '-t', `${takeDur.toFixed(2)}`,
     '-vf', `fps=${VIDEO.fps},scale=${VIDEO.width}:${VIDEO.height}:force_original_aspect_ratio=decrease,pad=${VIDEO.width}:${VIDEO.height}:(ow-iw)/2:(oh-ih)/2,format=yuv420p`,
-    '-c:v', 'libx264', '-preset', 'medium', '-crf', String(VIDEO.crf), '-an',
+    '-c:v', 'libx264', '-preset', 'veryfast', '-crf', String(VIDEO.crf), '-an',
     join(buildDir, '02_take.mp4')], 'take segment');
 
   // the end card must cover any narration that runs past the take
@@ -202,7 +202,7 @@ export async function assemble({ script, chromium: chr, share = true, keepBuild 
   if (share) {
     ff(['-i', FILES.master,
       '-vf', `scale=${VIDEO.shareWidth}:${VIDEO.shareHeight},format=yuv420p`,
-      '-c:v', 'libx264', '-preset', 'medium', '-crf', String(VIDEO.shareCrf),
+      '-c:v', 'libx264', '-preset', 'veryfast', '-crf', String(VIDEO.shareCrf),
       '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', FILES.share], '720p share cut');
     log.ok(`shareable → ${FILES.share}`);
   }

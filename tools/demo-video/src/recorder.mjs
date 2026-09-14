@@ -268,9 +268,12 @@ const noop = async () => {};
 /* ── act choreography ───────────────────────────────────────────────────── */
 
 const STEPS = {
-  /* ACT 01 · open the app: cold-open drift on the 3-D polar chart */
+  /* ACT 01 · open the app in LIVE mode: cold-open drift on the 3-D polar chart */
   async '01_open'(C) {
-    await C.page.waitForTimeout(900);
+    // the whole film is LIVE: switch before the first narration breath lands
+    await C.clickAt(C.page.getByRole('tab', { name: 'LIVE' }), { settle: 0.6, label: 'LIVE tab' }).catch(() => {});
+    await C.waitText('Named bergs in area', 120000);
+    await C.page.waitForTimeout(800);
     const cx = C.width * 0.44;
     const cy = C.height * 0.55;
     await C.glide(cx, cy, 18);
@@ -285,17 +288,13 @@ const STEPS = {
     await C.glide(C.width * 0.62, C.height * 0.6, 12);
   },
 
-  /* ACT 02 · SIMULATION → LIVE, then provenance */
+  /* ACT 02 · LIVE badge + provenance (already live since act 01) */
   async '02_live'(C) {
-    await C.shot('02_before_live');
-    await C.clickAt(C.page.getByRole('tab', { name: 'SIMULATION' }), { settle: 0.9, label: 'SIMULATION tab' }).catch(() => {});
-    await C.sleep(0.6);
-    await C.clickAt(C.page.getByRole('tab', { name: 'LIVE' }), { settle: 0.5, label: 'LIVE tab' });
-    await C.waitText('Named bergs in area', 90000);
     await C.shot('02_live');
     await C.still('02_live_mode');
-    await C.railScroll('PLANNED', 0.8);
+    await C.railScroll('PLANNED', 0.9);
     await C.glide(C.width * 0.84, C.height * 0.52, 10);
+    await C.scrollThrough(C.railScroller(), { passes: 1, stepMs: 200 });
   },
 
   /* ACT 03 · tour: PLAN group */
@@ -338,7 +337,10 @@ const STEPS = {
 
   /* ACT 06 · sea ice: observations → +48 h → σ band → model card */
   async '06_seaice'(C) {
-    await C.section('SEA_ICE');
+    // In LIVE the whole environment is one stacked, scrollable panel on the
+    // default section — the console tour left us on a module section, so come
+    // back before the deep-dive acts (risk/routes/drill live in this stack).
+    await C.section('MISSION');
     await C.railScroll('Observation day', 0.8);
     await C.shot('06_obs');
     const slider = C.page.getByLabel('Sea-ice observation day');
@@ -364,7 +366,6 @@ const STEPS = {
 
   /* ACT 07 · icebergs */
   async '07_icebergs'(C) {
-    await C.section('ICEBERGS');
     await C.railScroll('Named bergs in area', 0.8);
     const berg = C.btn(/C18C/).first();
     if (await berg.count()) await C.clickAt(berg, { settle: 1.4, label: 'berg C18C' }).catch(() => {});

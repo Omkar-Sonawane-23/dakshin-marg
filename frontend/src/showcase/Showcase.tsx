@@ -238,12 +238,14 @@ function HeroDemoVideo() {
     <div className="hero-demo-shell" id="hero-demo-video" aria-label="Dakshin Marg system demonstration">
       <div className="hero-demo-topline">
         <span><i className="live-dot" /> SYSTEM DEMO / RUNNING APPLICATION</span>
-        <span className="mono">08:04 · LOCAL RECORDING / 720P</span>
+        <span className="mono">08:04 · AUTOPLAY PREVIEW / 720P</span>
       </div>
       <div className="hero-demo-canvas">
         <video
           ref={videoRef}
           className="hero-demo-video"
+          autoPlay
+          muted
           controls
           playsInline
           preload="metadata"
@@ -266,7 +268,7 @@ function HeroDemoVideo() {
       <div className="hero-demo-readouts" aria-label="Demo details">
         <div><span>RECORDING</span><strong>08:04 WALKTHROUGH</strong></div>
         <div><span>PRODUCT</span><strong>WORKING CONSOLE</strong></div>
-        <div><span>CONTROL</span><strong>HUMAN DECISION</strong></div>
+        <div><span>AUDIO</span><strong>USE PLAYER CONTROLS</strong></div>
       </div>
       <div className="hero-demo-footer">
         <StatusPill tone="green" icon="play">RUNNING APPLICATION</StatusPill>
@@ -279,20 +281,20 @@ function HeroDemoVideo() {
 
 function Hero() {
   const externalDemoUrl = import.meta.env.VITE_YOUTUBE_URL;
-  const watchHeroDemo = () => document.getElementById('hero-demo-video')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const focusHeroDemo = () => document.getElementById('hero-demo-video')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   return (
     <section className="showcase-hero showcase-container" id="home">
+      <HeroDemoVideo />
       <div className="hero-copy">
         <div className="hero-eyebrow"><span className="eyebrow-line" />SMART INDIA HACKATHON 2026 <span className="eyebrow-divider">/</span> TRANSPORTATION &amp; LOGISTICS</div>
         <h1>Navigate the<br /><em>unpredictable.</em></h1>
         <p className="hero-subtitle">An intelligent decision-support platform for safer navigation through Antarctica's dynamic maritime environment.</p>
         <div className="hero-actions">
           <a className="button button-primary" href="/console"><span>Explore the system</span><Icon name="arrow" size={17} /></a>
-          {externalDemoUrl ? <a className="button button-secondary" href={externalDemoUrl} target="_blank" rel="noreferrer"><Icon name="play" size={13} /><span>Watch demo</span></a> : <button className="button button-secondary" type="button" onClick={watchHeroDemo}><Icon name="play" size={13} /><span>Watch demo</span></button>}
+          {externalDemoUrl ? <a className="button button-secondary" href={externalDemoUrl} target="_blank" rel="noreferrer"><Icon name="play" size={13} /><span>Watch demo</span></a> : <button className="button button-secondary" type="button" onClick={focusHeroDemo}><Icon name="play" size={13} /><span>Watch demo</span></button>}
         </div>
         <div className="hero-principle"><span className="principle-rule" /><span><b>OBSERVE</b> → <b>PREDICT</b> → <b>ASSESS</b> → <b>OPTIMIZE</b> → <b>DECIDE</b></span></div>
       </div>
-      <HeroDemoVideo />
       <div className="hero-footnote"><span>01 / WORKING APPLICATION DEMO</span><span>SCROLL TO EXPLORE <span className="scroll-arrow">↓</span></span></div>
     </section>
   );

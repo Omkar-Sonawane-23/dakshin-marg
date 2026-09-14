@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import Architecture from './Architecture';
-import HeroMap from './HeroMap';
 import Icon from './Icon';
 import { demoVideo, showcaseShots, type ShowcaseShot } from './assets';
 import Workflow from './Workflow';
@@ -225,8 +224,62 @@ function ShowcaseNav({ activeSection }: { activeSection: string }) {
   );
 }
 
+function HeroDemoVideo() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+
+  const startVideo = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    void video.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+  };
+
+  return (
+    <div className="hero-demo-shell" id="hero-demo-video" aria-label="Dakshin Marg system demonstration">
+      <div className="hero-demo-topline">
+        <span><i className="live-dot" /> SYSTEM DEMO / RUNNING APPLICATION</span>
+        <span className="mono">08:04 · LOCAL RECORDING / 720P</span>
+      </div>
+      <div className="hero-demo-canvas">
+        <video
+          ref={videoRef}
+          className="hero-demo-video"
+          controls
+          playsInline
+          preload="metadata"
+          poster={showcaseShots[0].src}
+          src={demoVideo}
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          aria-label="Dakshin Marg system demonstration recording"
+        />
+        {!playing && (
+          <button className="hero-demo-play" type="button" onClick={startVideo} aria-label="Play the Dakshin Marg demo recording">
+            <span><Icon name="play" size={23} /></span>
+            <b>PLAY SYSTEM DEMO</b>
+            <small>MISSION CONTROL · FULL WALKTHROUGH</small>
+          </button>
+        )}
+        <div className="hero-demo-corner hero-demo-corner-tl" />
+        <div className="hero-demo-corner hero-demo-corner-br" />
+      </div>
+      <div className="hero-demo-readouts" aria-label="Demo details">
+        <div><span>RECORDING</span><strong>08:04 WALKTHROUGH</strong></div>
+        <div><span>PRODUCT</span><strong>WORKING CONSOLE</strong></div>
+        <div><span>CONTROL</span><strong>HUMAN DECISION</strong></div>
+      </div>
+      <div className="hero-demo-footer">
+        <StatusPill tone="green" icon="play">RUNNING APPLICATION</StatusPill>
+        <DataTag tone="sim">DEMO DATA LABELLED</DataTag>
+        <span className="hero-demo-footer-copy"><Icon name="layers" size={13} /> OBSERVE → PREDICT → DECIDE</span>
+      </div>
+    </div>
+  );
+}
+
 function Hero() {
   const externalDemoUrl = import.meta.env.VITE_YOUTUBE_URL;
+  const watchHeroDemo = () => document.getElementById('hero-demo-video')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   return (
     <section className="showcase-hero showcase-container" id="home">
       <div className="hero-copy">
@@ -235,12 +288,12 @@ function Hero() {
         <p className="hero-subtitle">An intelligent decision-support platform for safer navigation through Antarctica's dynamic maritime environment.</p>
         <div className="hero-actions">
           <a className="button button-primary" href="/console"><span>Explore the system</span><Icon name="arrow" size={17} /></a>
-          {externalDemoUrl ? <a className="button button-secondary" href={externalDemoUrl} target="_blank" rel="noreferrer"><Icon name="play" size={13} /><span>Watch demo</span></a> : <button className="button button-secondary" type="button" onClick={() => scrollToSection('demo')}><Icon name="play" size={13} /><span>Watch demo</span></button>}
+          {externalDemoUrl ? <a className="button button-secondary" href={externalDemoUrl} target="_blank" rel="noreferrer"><Icon name="play" size={13} /><span>Watch demo</span></a> : <button className="button button-secondary" type="button" onClick={watchHeroDemo}><Icon name="play" size={13} /><span>Watch demo</span></button>}
         </div>
         <div className="hero-principle"><span className="principle-rule" /><span><b>OBSERVE</b> → <b>PREDICT</b> → <b>ASSESS</b> → <b>OPTIMIZE</b> → <b>DECIDE</b></span></div>
       </div>
-      <HeroMap />
-      <div className="hero-footnote"><span>01 / DECISION SUPPORT FOR ANTARCTIC WATERS</span><span>SCROLL TO EXPLORE <span className="scroll-arrow">↓</span></span></div>
+      <HeroDemoVideo />
+      <div className="hero-footnote"><span>01 / WORKING APPLICATION DEMO</span><span>SCROLL TO EXPLORE <span className="scroll-arrow">↓</span></span></div>
     </section>
   );
 }

@@ -26,7 +26,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export const hashText = (text) => createHash('sha256').update(String(text).trim().replace(/\s+/g, ' ')).digest('hex').slice(0, 16);
 
-/** Text as it will be spoken (also what the subtitle file shows). */
+/** Text as it will be spoken (also what the subtitle file shows, when --subtitles is used). */
 export function spoken(text) {
   return String(text ?? '')
     .replace(/\s+/g, ' ')

@@ -12,7 +12,7 @@
 > hand-held take, this document remains the teleprompter.
 >
 > **A generated version of this script exists** — [`video/`](video/README.md)
-> (narrated, LIVE mode, with subtitles and stills). Use it as the reference take, or re-record
+> (narrated, LIVE mode, no subtitles, with stills). Use it as the reference take, or re-record
 > with your own voice over the same cues.
 
 ---

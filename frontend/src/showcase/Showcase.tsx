@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import Architecture from './Architecture';
 import Icon from './Icon';
+import ResearchModal, { RESEARCH_HASH } from './ResearchModal';
 import { demoVideo, showcaseShots, type ShowcaseShot } from './assets';
 import Workflow from './Workflow';
 import { ArrowLink, DataTag, NumberedLabel, Reveal, SectionHeading, StatusPill } from './ShowcasePrimitives';
@@ -165,15 +166,7 @@ function DemoVideo() {
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           aria-label="Dakshin Marg system demonstration recording"
-        >
-          <track
-            kind="subtitles"
-            label="English"
-            srcLang="en"
-            src="/Dakshin-Marg-demo.vtt"
-            default
-          />
-        </video>
+        />
       ) : (
         <div className="demo-video-poster" style={{ backgroundImage: `url(${showcaseShots[0].src})` }}>
           <span className="demo-video-grid" />
@@ -228,7 +221,7 @@ function ShowcaseNav({ activeSection }: { activeSection: string }) {
         </div>
         <div className="showcase-nav-actions">
           {externalDemoUrl ? <a className="nav-demo-link" href={externalDemoUrl} target="_blank" rel="noreferrer">Watch demo <Icon name="arrow" size={14} /></a> : <button className="nav-demo-link" type="button" onClick={() => { scrollToSection('demo'); setOpen(false); }}>Watch demo <Icon name="arrow" size={14} /></button>}
-          <a className="nav-console-link" href="/console">Open console <Icon name="arrow" size={14} /></a>
+          <a className="nav-research-link" href="#research">View research <Icon name="document" size={14} /></a>
           <button className="showcase-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label={open ? 'Close navigation' : 'Open navigation'}><Icon name={open ? 'close' : 'menu'} size={19} /></button>
         </div>
       </nav>
@@ -295,15 +288,7 @@ function HeroDemoVideo() {
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           aria-label="Dakshin Marg system demonstration recording"
-        >
-          <track
-            kind="subtitles"
-            label="English"
-            srcLang="en"
-            src="/Dakshin-Marg-demo.vtt"
-            default
-          />
-        </video>
+        />
         {!playing && (
           <button className="hero-demo-play" type="button" onClick={startVideoWithAudio} aria-label={autoplayBlocked ? 'Enable audio and play the Dakshin Marg demo' : 'Play the Dakshin Marg demo with audio'}>
             <span><Icon name="play" size={23} /></span>
@@ -339,7 +324,7 @@ function Hero() {
         <h1>Navigate the<br /><em>unpredictable.</em></h1>
         <p className="hero-subtitle">An intelligent decision-support platform for safer navigation through Antarctica's dynamic maritime environment.</p>
         <div className="hero-actions">
-          <a className="button button-primary" href="/console"><span>Explore the system</span><Icon name="arrow" size={17} /></a>
+          <a className="button button-primary button-xl" href="#research"><Icon name="document" size={19} /><span>View our research</span></a>
           {externalDemoUrl ? <a className="button button-secondary" href={externalDemoUrl} target="_blank" rel="noreferrer"><Icon name="play" size={13} /><span>Watch demo</span></a> : <button className="button button-secondary" type="button" onClick={focusHeroDemo}><Icon name="play" size={13} /><span>Watch demo</span></button>}
         </div>
         <div className="hero-principle"><span className="principle-rule" /><span><b>OBSERVE</b> → <b>PREDICT</b> → <b>ASSESS</b> → <b>OPTIMIZE</b> → <b>DECIDE</b></span></div>
@@ -472,7 +457,7 @@ function PreviewSection({ onSelect }: { onSelect: (shot: ShowcaseShot) => void }
             </Reveal>
           ))}
         </div>
-        <div className="preview-foot"><span className="status-dot" /> CLICK ANY FRAME TO INSPECT THE WORKFLOW <ArrowLink href="/console">Open the live console</ArrowLink></div>
+        <div className="preview-foot"><span className="status-dot" /> CLICK ANY FRAME TO INSPECT THE WORKFLOW <ArrowLink href="#research">Read the research report</ArrowLink></div>
       </div>
     </section>
   );
@@ -587,9 +572,9 @@ function FinalCta() {
       <div className="showcase-container final-cta-inner">
         <div className="section-eyebrow">THE NEXT DECISION IS YOURS</div>
         <h2>See what the<br /><em>system sees.</em></h2>
-        <p>Explore the working console, inspect the route logic and watch the full mission workflow.</p>
+        <p>Read the research report, inspect the route logic and watch the full mission workflow.</p>
         <div className="hero-actions">
-          <a className="button button-primary" href="/console"><span>Explore the system</span><Icon name="arrow" size={17} /></a>
+          <a className="button button-primary button-xl" href="#research"><Icon name="document" size={19} /><span>View our research</span></a>
           {externalDemoUrl ? <a className="button button-secondary" href={externalDemoUrl} target="_blank" rel="noreferrer"><Icon name="play" size={13} /><span>Watch demo</span></a> : <button className="button button-secondary" type="button" onClick={() => scrollToSection('demo')}><Icon name="play" size={13} /><span>Watch demo</span></button>}
           <a className="button button-quiet" href="https://github.com/Omkar-Sonawane-23/dakshin-marg" target="_blank" rel="noreferrer"><Icon name="terminal" size={14} /><span>GitHub</span></a>
         </div>
@@ -606,6 +591,7 @@ function Footer() {
 export default function Showcase() {
   const [activeSection, setActiveSection] = useState('home');
   const [selectedShot, setSelectedShot] = useState<ShowcaseShot | null>(null);
+  const [researchOpen, setResearchOpen] = useState(() => window.location.hash === RESEARCH_HASH);
 
   useEffect(() => {
     const observedIds = [...navItems.map((item) => item.id), 'architecture', 'maturity', 'platform'];
@@ -623,6 +609,19 @@ export default function Showcase() {
     document.body.classList.add('showcase-active');
     return () => document.body.classList.remove('showcase-active');
   }, []);
+
+  useEffect(() => {
+    const syncResearchHash = () => setResearchOpen(window.location.hash === RESEARCH_HASH);
+    window.addEventListener('hashchange', syncResearchHash);
+    return () => window.removeEventListener('hashchange', syncResearchHash);
+  }, []);
+
+  const closeResearch = () => {
+    if (window.location.hash === RESEARCH_HASH) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+    setResearchOpen(false);
+  };
 
   return (
     <div className="showcase-page">
@@ -643,6 +642,7 @@ export default function Showcase() {
       </main>
       <Footer />
       {selectedShot && <GalleryModal shot={selectedShot} onClose={() => setSelectedShot(null)} />}
+      {researchOpen && <ResearchModal onClose={closeResearch} />}
     </div>
   );
 }

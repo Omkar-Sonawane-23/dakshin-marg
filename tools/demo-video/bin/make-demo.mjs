@@ -46,6 +46,7 @@ const OPTS = {
   dry: flag('dry'),
   keepServices: flag('keep-services'),
   noShare: flag('no-share'),
+  subtitles: flag('subtitles'),
   noInstall: flag('no-install'),
   forceNarration: flag('force-narration'),
   allowStale: flag('allow-stale-narration'),
@@ -77,6 +78,7 @@ Options
   --dry                    screenshots instead of video (fast rehearsal)
   --no-warm                skip the off-camera warm-up (only if caches are already hot)
   --no-share               do not render the 720p cut
+  --subtitles              also write the .srt/.vtt subtitle sidecars (off by default)
   --no-install             never install anything; fail if a tool is missing
   --force-narration        re-synthesise every clip even if the text is unchanged
   --allow-stale-narration  keep an old clip if a provider fails mid-run
@@ -86,7 +88,7 @@ Output
   ${FILES.master}
   ${FILES.share}
   ${FILES.narrationTrack}
-  ${FILES.subtitles}
+  ${FILES.subtitles} (only with --subtitles)
 
 Environment overrides
   DM_FFMPEG=/path/to/ffmpeg        DM_CHROMIUM=/path/to/chrome
@@ -159,7 +161,7 @@ async function main() {
     /* 5 · assemble */
     if (want('assemble') && !OPTS.dry) {
       if (!existsSync(FILES.timeline)) throw new Error('nothing to assemble: run the record stage first');
-      const out = await assemble({ script, chromium: pf.chromium, share: !OPTS.noShare });
+      const out = await assemble({ script, chromium: pf.chromium, share: !OPTS.noShare, subtitles: OPTS.subtitles });
       log.step('Deliverables');
       log.info(`video     ${out.master}`);
       log.info(`runtime   ${fmtTime(out.totalDur)}`);

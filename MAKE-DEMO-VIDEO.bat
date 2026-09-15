@@ -35,8 +35,7 @@ if "%RC%"=="0" (
   echo ============================================================
   echo  Done. Your video is in docs\video\
   echo    Dakshin-Marg-demo.mp4         master 1600x900, narrated
-  echo    Dakshin-Marg-demo-720p.mp4    shareable cut for submission
-  echo    Dakshin-Marg-demo.srt         subtitles
+  echo    Dakshin-Marg-demo-720p.mp4    shareable cut for submission ^(no subtitles^)
   echo ============================================================
 ) else (
   echo ============================================================

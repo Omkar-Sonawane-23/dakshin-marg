@@ -29,7 +29,7 @@ http://localhost:4173/console. Only prerequisites: Python 3.11+ and Node.js
 **`MAKE-DEMO-VIDEO.bat`** on Windows (or `npm run demo:video`). It boots the
 services, opens the app in a real browser, scrolls through every screen, runs
 the full mission workflow, narrates it with text-to-speech and encodes
-`docs/video/Dakshin-Marg-demo.mp4` + a 720p submission cut + subtitles.
+`docs/video/Dakshin-Marg-demo.mp4` + a 720p submission cut (no subtitles).
 See [tools/demo-video/README.md](tools/demo-video/README.md).
 
 ## Repository Layout
@@ -65,7 +65,7 @@ dakshin-marg/
 | [docs/replanning-drill.md](docs/replanning-drill.md) | Deterministic dynamic re-planning demonstration |
 | [docs/mission-simulation.md](docs/mission-simulation.md) | **Mission creation, voyage simulation, dynamic re-planning & layer control (deliverables A–G)** |
 | [docs/VIDEO_SCRIPT.md](docs/VIDEO_SCRIPT.md) | **Recording script for the SIH prototype video (LIVE mode): shot list, narration, pre-flight, recovery, verified numbers** |
-| [docs/video/](docs/video/README.md) | **SIH demo video (narrated, subtitles + stills), generated from the running app** |
+| [docs/video/](docs/video/README.md) | **SIH demo video (narrated + stills, no subtitles), generated from the running app** |
 | [tools/demo-video/](tools/demo-video/README.md) | **The one-click pipeline that records + narrates + encodes that video** |
 
 ## Current Status

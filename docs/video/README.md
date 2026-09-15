@@ -2,7 +2,7 @@
 
 **Master:** `Dakshin-Marg-demo.mp4` — 1280×720, 30 fps, narrated (kept out of Git: too large)
 **Shareable:** `Dakshin-Marg-demo-720p.mp4` — 1280×720, 30 fps, narrated (committed)
-**Narration only:** `Dakshin-Marg-narration.mp3` · **Subtitles:** `Dakshin-Marg-demo.srt`
+**Narration only:** `Dakshin-Marg-narration.mp3` (subtitles are not shipped; pass `--subtitles` to the pipeline to generate `.srt`/`.vtt` sidecars)
 **Stills for the pitch deck:** `stills/01…10.jpg`
 
 > The video is **not** a mock-up: it is a screen recording of the real
@@ -44,8 +44,9 @@ re-recording the visuals never means re-timing the voice.
 | 15_drill | workflow | deviation → conflict → re-plan → **accept new route (GREEN)** | every number from the live engines |
 | 16_close | cards | mission event log → end card | honesty summary · "the officer on the bridge decides" |
 
-Wall-clock timecodes land where the recorder's cues say they land; the `.srt`
-is generated from the same cues plus each clip's real duration.
+Wall-clock timecodes land where the recorder's cues say they land. With
+`--subtitles`, an `.srt` is generated from the same cues plus each clip's real
+duration.
 
 ## 2. What is simulated in this video
 

@@ -128,7 +128,7 @@ export async function assemble({ script, chromium: chr, share = true, keepBuild 
   const titleDur = Math.max(script.cards?.titleSeconds ?? 5, (durations['00_title'] ?? 0) + 1.6);
 
   /* narration placement */
-  const OFFSET = 0.4;                                  // seconds after the cue
+  const OFFSET = 0.35;                                 // seconds after the on-screen cue
   const placements = [];
   for (const act of script.acts) {
     const file = join(NARRATION_DIR, `${act.id}.mp3`);
@@ -139,7 +139,9 @@ export async function assemble({ script, chromium: chr, share = true, keepBuild 
     else {
       const cue = cues[`${act.id}_cue`];
       if (cue === undefined) { log.warn(`act ${act.id} has no recorded cue — skipping its narration`); continue; }
-      start = Math.max(titleDur + 0.3, titleDur + (cue - takeStart - takePad) + OFFSET);
+      // The take segment starts 1.0s before takeStart (-ss takeStart - 1.0),
+      // so in the final video the cue lands at titleDur + 1.0 + (cue - takeStart - takePad).
+      start = Math.max(titleDur + 0.3, titleDur + 1.0 + (cue - takeStart - takePad) + OFFSET);
     }
     placements.push({ id: act.id, file, start, duration: dur, text: act.text });
   }

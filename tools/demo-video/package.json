@@ -16,6 +16,7 @@
     "assemble": "node bin/make-demo.mjs --only=assemble"
   },
   "dependencies": {
+    "@sparticuz/chromium": "^153.0.0",
     "playwright-core": "^1.63.0"
   },
   "engines": {

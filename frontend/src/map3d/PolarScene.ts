@@ -508,14 +508,14 @@ export class PolarScene {
     if (keepAngles) {
       dir = this.camera.position.clone().sub(this.controls.target).normalize();
     } else {
-      // default 3D mission-control perspective: tilted, looking from the north
-      dir = new THREE.Vector3(0.12, 0.62, 0.78).normalize();
+      // default 3D mission-control perspective: tilted, looking from the south toward the corridor
+      dir = new THREE.Vector3(0.0, 0.58, 0.81).normalize();
     }
     this.startTween(target.clone().add(dir.multiplyScalar(dist)), target);
   }
 
   /** Fit a set of lon/lat points into the view. */
-  framePoints(pts: { lon: number; lat: number }[], padding = 1.5, keepAngles = true) {
+  framePoints(pts: { lon: number; lat: number }[], padding = 1.34, keepAngles = true) {
     if (pts.length === 0) return;
     let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
     for (const p of pts) {
@@ -523,7 +523,8 @@ export class PolarScene {
       minX = Math.min(minX, w.x); maxX = Math.max(maxX, w.x);
       minZ = Math.min(minZ, w.y); maxZ = Math.max(maxZ, w.y);
     }
-    const cx = (minX + maxX) / 2;
+    // shift target slightly east (+75 km) to keep Bharati and East Antarctica in clear view between side rails
+    const cx = (minX + maxX) / 2 + 75;
     const cz = (minZ + maxZ) / 2;
     const spanX = maxX - minX;
     const spanZ = maxZ - minZ;
@@ -537,7 +538,7 @@ export class PolarScene {
     const target = new THREE.Vector3(cx, 0, cz);
     const dir = keepAngles
       ? this.camera.position.clone().sub(this.controls.target).normalize()
-      : new THREE.Vector3(0.12, 0.62, 0.78).normalize();
+      : new THREE.Vector3(0.0, 0.58, 0.81).normalize();
     this.startTween(target.clone().add(dir.multiplyScalar(Math.min(MAX_DIST, dist))), target);
   }
 
@@ -586,11 +587,11 @@ export class PolarScene {
 
   reset() {
     this.framePoints([
-      { lon: 60, lat: -57.5 },
-      { lon: 76.19, lat: -69.35 },
-      { lon: 86, lat: -68 },
-      { lon: 56, lat: -60 },
-    ], 1.7, false);
+      { lon: 58.0, lat: -56.5 },
+      { lon: 77.0, lat: -69.8 },
+      { lon: 78.5, lat: -69.2 },
+      { lon: 56.5, lat: -57.5 },
+    ], 1.34, false);
     this.controls.enableRotate = true;
   }
 

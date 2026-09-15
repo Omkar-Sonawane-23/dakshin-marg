@@ -21,4 +21,5 @@ if ! command -v node >/dev/null 2>&1; then
   exit 1
 fi
 
+export DM_NO_BROWSER_DOWNLOAD=1
 exec node tools/demo-video/bin/make-demo.mjs "$@"

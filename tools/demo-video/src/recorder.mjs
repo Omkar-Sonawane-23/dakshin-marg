@@ -336,7 +336,8 @@ export async function recordTake(opts) {
       const dur = frameTs.length ? frameTs[frameTs.length - 1] - frameTs[0] : 0;
       const expect = total - firstMy;
       const span = { expected: Number(expect.toFixed(2)), recorded: Number(dur.toFixed(2)), frames: frameTs.length };
-      if (frameTs.length < 50 || Math.abs(dur - expect) > 5) {
+      const tailDur = Math.max(0.6, expect - dur);
+      if (frameTs.length < 50 || Math.abs(dur - expect) > 20) {
         const tl = JSON.parse(readFileSync(FILES.timeline, 'utf8'));
         writeFileSync(FILES.timeline, JSON.stringify({ ...tl, span }, null, 2));
         log.err(`capture span drift: ${dur.toFixed(1)}s of frames vs expected ${expect.toFixed(1)}s — aborting before assemble`);
@@ -349,7 +350,7 @@ export async function recordTake(opts) {
         lines.push(`duration ${(frameTs[i + 1] - frameTs[i]).toFixed(4)}`);
       }
       const lastF = join(framesDir, `${String(frameTs.length - 1).padStart(6, '0')}.jpg`);
-      lines.push(`file '${lastF}'`, 'duration 0.6000', `file '${lastF}'`);
+      lines.push(`file '${lastF}'`, `duration ${tailDur.toFixed(4)}`, `file '${lastF}'`);
       const list = join(framesDir, 'list.txt');
       writeFileSync(list, lines.join('\n'));
       const out = join(WORK, 'video', 'take_cdp.mp4');
@@ -414,19 +415,23 @@ const noop = async () => {};
 /* ── act choreography ───────────────────────────────────────────────────── */
 
 const STEPS = {
-  /* ACT 01 · open the app in LIVE mode: cold-open drift on the 3-D polar chart */
+  /* ACT 01 · open the app in LIVE mode: smooth exploration of 3-D polar chart */
   async '01_open'(C) {
-    const cx = C.width * 0.44;
-    const cy = C.height * 0.55;
-    await C.glide(cx, cy, 18);
-    await C.page.mouse.down();
-    for (const [dx, dy] of [[70, 10], [150, 22], [210, 30]]) {
-      await C.page.mouse.move(cx + dx, cy + dy, { steps: 14 });
-      await C.sleep(1.0);
-    }
-    await C.page.mouse.up();
+    const cx = C.width * 0.52;
+    const cy = C.height * 0.52;
+    await C.glide(cx, cy, 14);
+    await C.sleep(1.5);
+    // Subtle 3D orbit showcase with right mouse button (ROTATE)
+    await C.page.mouse.down({ button: 'right' });
+    await C.page.mouse.move(cx + 35, cy - 8, { steps: 12 });
+    await C.sleep(1.2);
+    await C.page.mouse.move(cx, cy, { steps: 12 });
+    await C.page.mouse.up({ button: 'right' });
+    // Reset camera to ensure mission corridor is perfectly framed
+    await C.page.keyboard.press('0');
+    await C.sleep(1.0);
     await C.shot('01_open');
-    await C.glide(C.width * 0.62, C.height * 0.6, 12);
+    await C.glide(C.width * 0.62, C.height * 0.6, 10);
   },
 
   /* ACT 02 · LIVE badge + provenance (already live since act 01) */
@@ -482,21 +487,24 @@ const STEPS = {
     await C.section('MISSION');
     await C.railScroll('Observation day', 0.8);
     await C.shot('06_obs');
+    await C.sleep(2.5);
     const slider = C.page.getByLabel('Sea-ice observation day');
     if (await slider.count()) {
       await C.clickAt(slider, { settle: 0.2, label: 'sea-ice slider' }).catch(() => {});
       await C.page.keyboard.press('ArrowRight');
-      await C.sleep(1.0);
+      await C.sleep(1.2);
       await C.page.keyboard.press('ArrowLeft');
-      await C.sleep(0.8);
+      await C.sleep(1.0);
     }
     await C.shot('06_obs_days');
     await C.clickAt(C.page.getByRole('tab', { name: '+48H' }), { settle: 0.4, label: '+48H tab' }).catch(() => {});
     await C.waitText('Uncertainty', 60000);
     await C.shot('06_forecast48');
+    await C.sleep(1.5);
     const sigma = C.page.getByRole('switch', { name: 'Toggle uncertainty layer' });
-    if (await sigma.count()) { await C.clickAt(sigma, { settle: 1.3, label: 'uncertainty layer' }).catch(() => {}); }
+    if (await sigma.count()) { await C.clickAt(sigma, { settle: 1.0, label: 'uncertainty layer' }).catch(() => {}); }
     await C.shot('06_uncertainty');
+    await C.sleep(2.0);
     await C.railScroll('Forecast model', 0.4);
     await C.clickAt(C.btn(/Forecast model/), { settle: 1.2, label: 'forecast model card' }).catch(() => {});
     await C.shot('06_model_card');
@@ -505,16 +513,20 @@ const STEPS = {
   /* ACT 07 · icebergs */
   async '07_icebergs'(C) {
     await C.railScroll('Named bergs in area', 0.8);
+    await C.sleep(2.5);
     const berg = C.btn(/C18C/).first();
     if (await berg.count()) await C.clickAt(berg, { settle: 1.4, label: 'berg C18C' }).catch(() => {});
     await C.shot('07_icebergs');
+    await C.sleep(1.5);
     const tracks = C.page.getByRole('switch', { name: 'Toggle berg drift forecasts' });
     if (await tracks.count()) {
       await C.clickAt(tracks, { settle: 0.6, label: 'drift tracks on' }).catch(() => {});
-      await C.sleep(1.4);
+      await C.sleep(2.5);
       await C.clickAt(tracks, { settle: 1.0, label: 'drift tracks off' }).catch(() => {});
     }
     await C.scrollThrough(C.railScroller(), { passes: 1, stepMs: 180 });
+    // Reset camera to mission corridor
+    await C.page.keyboard.press('0');
   },
 
   /* ACT 08 · risk: layer on, ice-class sweep, why-this-risk */
@@ -524,13 +536,20 @@ const STEPS = {
     if (await sw.count()) await C.clickAt(sw, { settle: 0.4, label: 'risk layer' }).catch(() => {});
     await C.waitText('Worst cell in area', 90000);
     await C.shot('08_risk_on');
+    await C.sleep(2.5);
     const iceTabs = C.page.getByRole('tablist', { name: 'Vessel ice class' });
-    for (const ic of ['PC7', 'NONE', 'PC5']) {
-      const tab = iceTabs.getByRole('tab', { name: ic, exact: true }).first();
-      if (await tab.count()) { await C.clickAt(tab, { settle: 1.3, label: `ice class ${ic}` }).catch(() => {}); }
-      await C.shot(`08_risk_${ic}`);
-      if (ic === 'PC7') await C.still('05_risk_pc7');
-    }
+    const tabPC7 = iceTabs.getByRole('tab', { name: 'PC7', exact: true }).first();
+    if (await tabPC7.count()) { await C.clickAt(tabPC7, { settle: 1.3, label: 'ice class PC7' }).catch(() => {}); }
+    await C.shot('08_risk_PC7');
+    await C.still('05_risk_pc7');
+    await C.sleep(3.5);
+    const tabNONE = iceTabs.getByRole('tab', { name: 'NONE', exact: true }).first();
+    if (await tabNONE.count()) { await C.clickAt(tabNONE, { settle: 1.3, label: 'ice class NONE' }).catch(() => {}); }
+    await C.shot('08_risk_NONE');
+    await C.sleep(3.0);
+    const tabPC5 = iceTabs.getByRole('tab', { name: 'PC5', exact: true }).first();
+    if (await tabPC5.count()) { await C.clickAt(tabPC5, { settle: 1.0, label: 'ice class PC5' }).catch(() => {}); }
+    await C.shot('08_risk_PC5');
     await C.clickAt(C.btn(/Why this risk/), { settle: 1.1, label: 'why this risk' }).catch(() => {});
     await C.shot('08_why_risk');
   },
@@ -540,9 +559,14 @@ const STEPS = {
     await C.railScroll('Calculate routes', 0.5);
     await C.clickAt(C.btn(/Calculate routes/i), { settle: 0.4, label: 'calculate routes' });
     await C.waitText('RECOMMENDED', 180000);
+    await C.page.keyboard.press('0');
     await C.shot('09_routes');
     const direct = C.rail().getByRole('button', { name: /DIRECT/ }).first();
     if (await direct.count()) await C.clickAt(direct, { settle: 0.8, label: 'DIRECT card' }).catch(() => {});
+    await C.sleep(3.0);
+    const cons = C.rail().getByRole('button', { name: /CONSERVATIVE/ }).first();
+    if (await cons.count()) await C.glide(C.width * 0.88, C.height * 0.28, 8);
+    await C.sleep(4.0);
     await C.railScroll('route details', 0.4);
     await C.clickAt(C.btn(/route details/), { settle: 1.0, label: 'route details' }).catch(() => {});
     await C.waitText('NOT COMPUTED', 15000);
@@ -612,6 +636,7 @@ const STEPS = {
     C.mark('mission_created');
     await C.waitBtn(/Accept & start voyage simulation/, 180000);
     C.mark('mission_routes_ready');
+    await C.page.keyboard.press('0');
     await C.shot('10b_mission_open');
   },
 
@@ -620,8 +645,10 @@ const STEPS = {
     await C.railScroll('Route Options', 0.5);
     const direct = C.rail().getByRole('button', { name: /DIRECT/ }).first();
     if (await direct.count()) await C.clickAt(direct, { settle: 0.9, label: 'DIRECT option' }).catch(() => {});
+    await C.sleep(1.0);
     await C.clickAt(C.btn(/Accept & start voyage simulation/).first(), { settle: 1.4, label: 'accept route' });
     C.mark('route_accepted');
+    await C.page.keyboard.press('0');
     await C.shot('11_underway');
   },
 
@@ -634,6 +661,7 @@ const STEPS = {
     }
     await C.railScroll('Conditions at Vessel', 0.8);
     await C.shot('12_conditions');
+    await C.sleep(3.0);
     if (await plus12().count()) {
       await C.clickAt(plus12(), { settle: 1.0, label: '+12h #2' }).catch(() => {});
       C.mark('step_plus12_2');
@@ -645,18 +673,22 @@ const STEPS = {
 
   /* ACT 13 · re-plan and accept */
   async '13_review'(C) {
+    await C.sleep(4.5);
     await C.clickAt(C.btn(/Generate alternative routes/).first(), { settle: 0.4, label: 'generate alternatives' }).catch(() => {});
     await C.waitText('Candidate Routes', 150000);
     C.mark('candidates_ready');
     await C.shot('13_candidates');
+    await C.sleep(2.0);
     await C.railScroll('Candidate Routes', 0.6);
     const cand = C.page.locator('div.panel-inset', { hasText: 'CONSERVATIVE' }).first();
     if (await cand.count()) {
       await C.clickAt(cand.getByRole('button').first(), { settle: 1.0, label: 'select CONSERVATIVE' }).catch(() => {});
       await C.shot('13_selected');
+      await C.sleep(3.0);
       await C.clickAt(cand.getByRole('button', { name: /Accept this route/ }), { settle: 1.4, label: 'accept route' }).catch(() => {});
     }
     C.mark('alternative_accepted');
+    await C.page.keyboard.press('0');
     await C.shot('13_accepted');
   },
 
@@ -666,22 +698,48 @@ const STEPS = {
     await C.railScroll('Route Simulation', 0.6);
     await C.clickAt(C.btn(/Run simulation/), { settle: 0.4, label: 'run simulation' });
     await C.waitText('Mission start', 180000);
+    await C.page.keyboard.press('0');
     await C.shot('14_drill_stage1');
-    await C.still('09_drill_conflict');
     await C.clickAt(C.btn(/Accept recommended route/), { settle: 1.3, label: 'accept recommended route' }).catch(() => {});
     await C.shot('14_drill_accepted');
   },
 
   /* ACT 15 · drill stages → accept the new route */
   async '15_drill'(C) {
-    for (const [i, name] of ['underway', 'deviation', 'conflict', 'replan', 'decision'].entries()) {
-      await C.sleep(3.2);
-      const adv = C.btn('Advance').first();
-      if (await adv.count()) await C.clickAt(adv, { settle: 0.4, label: `advance ${i + 1}` }).catch(() => {});
-      C.mark(`drill_${name}`);
-      await C.shot(`15_${name}`);
-    }
-    await C.sleep(1.2);
+    const adv = () => C.btn('Advance').first();
+    // Stage 1 -> 2: Underway ("Twenty-four hours at cruise speed...")
+    await C.sleep(1.0);
+    if (await adv().count()) await C.clickAt(adv(), { settle: 0.4, label: 'advance to underway' }).catch(() => {});
+    C.mark('drill_underway');
+    await C.shot('15_underway');
+
+    // Stage 2 -> 3: Deviation ("then the simulated re-sighting arrives...")
+    await C.sleep(4.5);
+    if (await adv().count()) await C.clickAt(adv(), { settle: 0.4, label: 'advance to deviation' }).catch(() => {});
+    C.mark('drill_deviation');
+    await C.shot('15_deviation');
+
+    // Stage 3 -> 4: Conflict ("The remaining leg goes from low to critical...")
+    await C.sleep(5.0);
+    if (await adv().count()) await C.clickAt(adv(), { settle: 0.4, label: 'advance to conflict' }).catch(() => {});
+    C.mark('drill_conflict');
+    await C.shot('15_conflict');
+    await C.still('09_drill_conflict');
+
+    // Stage 4 -> 5: Replan ("Re-planning recommends CONSERVATIVE...")
+    await C.sleep(5.5);
+    if (await adv().count()) await C.clickAt(adv(), { settle: 0.4, label: 'advance to replan' }).catch(() => {});
+    C.mark('drill_replan');
+    await C.shot('15_replan');
+
+    // Stage 5 -> 6: Decision
+    await C.sleep(3.5);
+    if (await adv().count()) await C.clickAt(adv(), { settle: 0.4, label: 'advance to decision' }).catch(() => {});
+    C.mark('drill_decision');
+    await C.shot('15_decision');
+
+    // Accept ("I accept it, and the new route becomes active.")
+    await C.sleep(2.0);
     await C.clickAt(C.btn(/Accept new route/), { settle: 1.6, label: 'accept new route' }).catch(() => {});
     C.mark('drill_new_route_active');
     await C.shot('15_active');

@@ -4,7 +4,10 @@
  *   docs/video/Dakshin-Marg-demo.mp4         master (1280×720, 30 fps, narrated)
  *   docs/video/Dakshin-Marg-demo-720p.mp4    shareable cut (1280×720)
  *   docs/video/Dakshin-Marg-narration.mp3    voice track only
- *   docs/video/Dakshin-Marg-demo.srt         subtitles, paced from the real audio
+ *   docs/video/Dakshin-Marg-demo.srt         subtitles, paced from the real audio —
+ *                                            only when `subtitles: true` is passed
+ *                                            (`--subtitles` on the CLI). The video
+ *                                            itself never carries subtitle tracks.
  *
  * Structure: title card → recorded take (warm-up trimmed) → end card, with the
  * narration laid on at the cue times the recorder wrote into work/timeline.json.
@@ -104,11 +107,18 @@ function buildSrt(placements) {
   return idx - 1;
 }
 
+/** Remove any subtitle sidecars a previous run may have left behind. */
+function removeSubtitles() {
+  for (const p of [FILES.subtitles, FILES.subtitles.replace(/\.srt$/, '.vtt')]) {
+    rmSync(p, { force: true });
+  }
+}
+
 /* ── the assembly ───────────────────────────────────────────────────────── */
 
-export async function assemble({ script, chromium: chr, share = true, keepBuild = false } = {}) {
+export async function assemble({ script, chromium: chr, share = true, keepBuild = false, subtitles = false } = {}) {
   ensureDirs();
-  log.step('Assemble — cards, take, narration, subtitles');
+  log.step(`Assemble — cards, take, narration${subtitles ? ', subtitles' : ' (no subtitles)'}`);
 
   if (!existsSync(FILES.timeline)) throw new Error(`no recorded timeline at ${FILES.timeline} — run the record step first`);
   const tl = JSON.parse(readFileSync(FILES.timeline, 'utf8'));
@@ -215,8 +225,14 @@ export async function assemble({ script, chromium: chr, share = true, keepBuild 
 
   ff(['-i', mixFile, '-t', `${totalDur.toFixed(2)}`, '-c:a', 'libmp3lame', '-b:a', '160k', FILES.narrationTrack], 'narration track');
 
-  const subs = buildSrt(placements);
-  log.ok(`subtitles → ${FILES.subtitles} (${subs} cues)`);
+  let subs = 0;
+  if (subtitles) {
+    subs = buildSrt(placements);
+    log.ok(`subtitles → ${FILES.subtitles} (${subs} cues)`);
+  } else {
+    removeSubtitles();
+    log.info('subtitles skipped (pass --subtitles to generate the .srt/.vtt sidecars)');
+  }
 
   if (!keepBuild) {
     for (const f of ['01_title.mp4', '02_take.mp4', '03_end.mp4', 'silent.mp4']) {
@@ -229,9 +245,9 @@ export async function assemble({ script, chromium: chr, share = true, keepBuild 
   log.info(`master      ${FILES.master}   ${mb(FILES.master)}`);
   log.info(`720p        ${FILES.share}   ${mb(FILES.share)}`);
   log.info(`narration   ${FILES.narrationTrack}   ${mb(FILES.narrationTrack)}`);
-  log.info(`subtitles   ${FILES.subtitles}`);
+  if (subtitles) log.info(`subtitles   ${FILES.subtitles}`);
   log.info(`runtime     ${fmtTime(totalDur)} (title ${titleDur.toFixed(1)}s + take ${takeDur.toFixed(1)}s + end ${endDur.toFixed(1)}s)`);
-  return { master: FILES.master, share: FILES.share, subtitles: FILES.subtitles, totalDur, titleDur, takeDur, endDur };
+  return { master: FILES.master, share: FILES.share, subtitles: subtitles ? FILES.subtitles : null, totalDur, titleDur, takeDur, endDur };
 }
 
 export function fmtTime(sec) {

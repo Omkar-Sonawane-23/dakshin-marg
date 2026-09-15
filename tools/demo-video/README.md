@@ -4,7 +4,8 @@ This directory is a **complete, re-runnable pipeline** that produces the
 Smart-India-Hackathon demo video *from the running application*: it starts the
 three services, opens the web app in a real browser, scrolls and clicks through
 every screen, records the session, narrates it with text-to-speech, and encodes
-the final MP4 + subtitles.
+the final MP4 (no subtitles — the `.srt`/`.vtt` sidecars are only written
+with `--subtitles`).
 
 One command, on any machine:
 
@@ -21,7 +22,7 @@ Outputs (written into `docs/video/`):
 | `Dakshin-Marg-demo.mp4` | master render — 1600×900, 30 fps, narrated (git-ignored, big) |
 | `Dakshin-Marg-demo-720p.mp4` | shareable submission cut — 1280×720 (committed) |
 | `Dakshin-Marg-narration.mp3` | the voice track alone (git-ignored) |
-| `Dakshin-Marg-demo.srt` | subtitles, paced from the real audio (committed) |
+| `Dakshin-Marg-demo.srt` | subtitles, paced from the real audio (only with `--subtitles`, not committed) |
 | `stills/*.jpg` | pitch-deck stills captured during the take (committed) |
 
 Scratch (raw webm, cards, intermediates, logs) lives in `tools/demo-video/work/`
@@ -86,9 +87,9 @@ running instead of killing it, then warms the server-side caches
   camera; the theme is pinned to mission-control dark for a deterministic look.
 
 **assemble** renders the title/end cards, trims the warm-up, concatenates
-`title → take → end`, mixes the narration at the recorded cue times, writes the
-`.srt` (paced from each clip's real duration), and encodes the master plus the
-720p cut with `+faststart`.
+`title → take → end`, mixes the narration at the recorded cue times and encodes
+the master plus the 720p cut with `+faststart`. With `--subtitles` it also
+writes the `.srt`/`.vtt` sidecars, paced from each clip's real duration.
 
 ---
 
@@ -103,11 +104,11 @@ Everything editorial lives in **`narration.json`** — no code changes needed:
   "core": true,               // kept by --short
   "screen": "…",              // what the viewer should see (documentation)
   "beat": "…",                // the choreography note (documentation)
-  "text": "Risk is the core product: …"   // spoken, subtitled, and timed
+  "text": "Risk is the core product: …"   // spoken and timed (subtitled only with --subtitles)
 }
 ```
 
-- Changing `text` changes the voice, the subtitles and the act's screen time.
+- Changing `text` changes the voice and the act's screen time (and the subtitles, when `--subtitles` is used).
 - The matching choreography is a function named after the act id in
   `src/recorder.mjs`; an act with no function gets a generic "scroll the panel"
   pass, so new narration-only beats work with zero code.
@@ -147,7 +148,7 @@ tools/demo-video/
 │   ├── services.mjs         # start · health-gate · warm · stop
 │   ├── tts.mjs              # provider chain + clip cache + durations
 │   ├── recorder.mjs         # the director (warm-up, tour, workflow, cues)
-│   ├── assemble.mjs         # cards · concat · narration mix · srt · 720p
+│   ├── assemble.mjs         # cards · concat · narration mix · [srt] · 720p
 │   └── cards/               # title.html, end.html ({{PRODUCT}} substituted)
 └── work/                    # scratch (git-ignored)
 ```

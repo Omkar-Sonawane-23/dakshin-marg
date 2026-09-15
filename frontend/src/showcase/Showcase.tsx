@@ -165,15 +165,7 @@ function DemoVideo() {
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           aria-label="Dakshin Marg system demonstration recording"
-        >
-          <track
-            kind="subtitles"
-            label="English"
-            srcLang="en"
-            src="/Dakshin-Marg-demo.vtt"
-            default
-          />
-        </video>
+        />
       ) : (
         <div className="demo-video-poster" style={{ backgroundImage: `url(${showcaseShots[0].src})` }}>
           <span className="demo-video-grid" />
@@ -295,15 +287,7 @@ function HeroDemoVideo() {
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           aria-label="Dakshin Marg system demonstration recording"
-        >
-          <track
-            kind="subtitles"
-            label="English"
-            srcLang="en"
-            src="/Dakshin-Marg-demo.vtt"
-            default
-          />
-        </video>
+        />
         {!playing && (
           <button className="hero-demo-play" type="button" onClick={startVideoWithAudio} aria-label={autoplayBlocked ? 'Enable audio and play the Dakshin Marg demo' : 'Play the Dakshin Marg demo with audio'}>
             <span><Icon name="play" size={23} /></span>

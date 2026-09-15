@@ -239,26 +239,54 @@ function ShowcaseNav({ activeSection }: { activeSection: string }) {
 function HeroDemoVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false);
 
-  const startVideo = () => {
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+
+    const tryAutoplayWithAudio = () => {
+      video.muted = false;
+      video.defaultMuted = false;
+      video.volume = 1;
+      void video.play()
+        .then(() => {
+          setPlaying(true);
+          setAutoplayBlocked(false);
+        })
+        .catch(() => {
+          setAutoplayBlocked(true);
+        });
+    };
+
+    if (video.readyState >= 3) tryAutoplayWithAudio();
+    else video.addEventListener('canplay', tryAutoplayWithAudio, { once: true });
+    return () => video.removeEventListener('canplay', tryAutoplayWithAudio);
+  }, []);
+
+  const startVideoWithAudio = () => {
     const video = videoRef.current;
     if (!video) return;
     video.muted = false;
-    void video.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+    video.defaultMuted = false;
+    video.volume = 1;
+    void video.play().then(() => {
+      setPlaying(true);
+      setAutoplayBlocked(false);
+    }).catch(() => setAutoplayBlocked(true));
   };
 
   return (
     <div className="hero-demo-shell" id="hero-demo-video" aria-label="Dakshin Marg system demonstration">
       <div className="hero-demo-topline">
         <span><i className="live-dot" /> SYSTEM DEMO / RUNNING APPLICATION</span>
-        <span className="mono">11:11 · AUTOPLAY PREVIEW / 720P</span>
+        <span className="mono">11:11 · AUTOPLAY WITH AUDIO / 720P</span>
       </div>
       <div className="hero-demo-canvas">
         <video
           ref={videoRef}
           className="hero-demo-video"
           autoPlay
-          muted
           controls
           playsInline
           preload="metadata"
@@ -277,10 +305,10 @@ function HeroDemoVideo() {
           />
         </video>
         {!playing && (
-          <button className="hero-demo-play" type="button" onClick={startVideo} aria-label="Play the Dakshin Marg demo recording">
+          <button className="hero-demo-play" type="button" onClick={startVideoWithAudio} aria-label={autoplayBlocked ? 'Enable audio and play the Dakshin Marg demo' : 'Play the Dakshin Marg demo with audio'}>
             <span><Icon name="play" size={23} /></span>
-            <b>PLAY SYSTEM DEMO</b>
-            <small>MISSION CONTROL · FULL WALKTHROUGH</small>
+            <b>{autoplayBlocked ? 'ENABLE SOUND & PLAY' : 'PLAY SYSTEM DEMO'}</b>
+            <small>{autoplayBlocked ? 'BROWSER PERMISSION REQUIRED' : 'MISSION CONTROL · FULL WALKTHROUGH'}</small>
           </button>
         )}
         <div className="hero-demo-corner hero-demo-corner-tl" />
@@ -289,7 +317,7 @@ function HeroDemoVideo() {
       <div className="hero-demo-readouts" aria-label="Demo details">
         <div><span>RECORDING</span><strong>11:11 WALKTHROUGH</strong></div>
         <div><span>PRODUCT</span><strong>WORKING CONSOLE</strong></div>
-        <div><span>AUDIO</span><strong>USE PLAYER CONTROLS</strong></div>
+        <div><span>AUDIO</span><strong>ENABLED BY DEFAULT</strong></div>
       </div>
       <div className="hero-demo-footer">
         <StatusPill tone="green" icon="play">RUNNING APPLICATION</StatusPill>

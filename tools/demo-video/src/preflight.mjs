@@ -278,7 +278,7 @@ function systemBrowser() {
  * `{ ok, executablePath?, channel?, args, inflate?, via }`.
  */
 export async function resolveChromium({ install = true, headed = false } = {}) {
-  const explicit = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" || process.env.PLAYWRIGHT_CHROMIUM_PATH;
+  const explicit = process.env.DM_CHROMIUM || process.env.PLAYWRIGHT_CHROMIUM_PATH;
   if (explicit && existsSync(explicit)) {
     return { ok: true, executablePath: explicit, args: SWIFTSHADER_ARGS, via: 'DM_CHROMIUM' };
   }

@@ -143,7 +143,11 @@ function DemoVideo() {
   const startVideo = () => {
     setLoaded(true);
     window.setTimeout(() => {
-      void videoRef.current?.play().then(() => setPlaying(true)).catch(() => undefined);
+      const video = videoRef.current;
+      if (video) {
+        video.muted = false;
+        void video.play().then(() => setPlaying(true)).catch(() => undefined);
+      }
     }, 60);
   };
 
@@ -161,7 +165,15 @@ function DemoVideo() {
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           aria-label="Dakshin Marg system demonstration recording"
-        />
+        >
+          <track
+            kind="subtitles"
+            label="English"
+            srcLang="en"
+            src="/Dakshin-Marg-demo.vtt"
+            default
+          />
+        </video>
       ) : (
         <div className="demo-video-poster" style={{ backgroundImage: `url(${showcaseShots[0].src})` }}>
           <span className="demo-video-grid" />
@@ -243,8 +255,6 @@ function HeroDemoVideo() {
           setAutoplayBlocked(false);
         })
         .catch(() => {
-          // Browsers can block autoplay with sound. Keep the video unmuted and
-          // expose a clear one-click permission fallback instead of muting it.
           setAutoplayBlocked(true);
         });
     };
@@ -270,7 +280,7 @@ function HeroDemoVideo() {
     <div className="hero-demo-shell" id="hero-demo-video" aria-label="Dakshin Marg system demonstration">
       <div className="hero-demo-topline">
         <span><i className="live-dot" /> SYSTEM DEMO / RUNNING APPLICATION</span>
-        <span className="mono">08:04 · AUTOPLAY WITH AUDIO / 720P</span>
+        <span className="mono">11:11 · AUTOPLAY WITH AUDIO / 720P</span>
       </div>
       <div className="hero-demo-canvas">
         <video
@@ -279,17 +289,25 @@ function HeroDemoVideo() {
           autoPlay
           controls
           playsInline
-          preload="auto"
+          preload="metadata"
           poster={showcaseShots[0].src}
           src={demoVideo}
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           aria-label="Dakshin Marg system demonstration recording"
-        />
+        >
+          <track
+            kind="subtitles"
+            label="English"
+            srcLang="en"
+            src="/Dakshin-Marg-demo.vtt"
+            default
+          />
+        </video>
         {!playing && (
           <button className="hero-demo-play" type="button" onClick={startVideoWithAudio} aria-label={autoplayBlocked ? 'Enable audio and play the Dakshin Marg demo' : 'Play the Dakshin Marg demo with audio'}>
             <span><Icon name="play" size={23} /></span>
-            <b>{autoplayBlocked ? 'ENABLE SOUND & PLAY' : 'PLAY WITH SOUND'}</b>
+            <b>{autoplayBlocked ? 'ENABLE SOUND & PLAY' : 'PLAY SYSTEM DEMO'}</b>
             <small>{autoplayBlocked ? 'BROWSER PERMISSION REQUIRED' : 'MISSION CONTROL · FULL WALKTHROUGH'}</small>
           </button>
         )}
@@ -297,7 +315,7 @@ function HeroDemoVideo() {
         <div className="hero-demo-corner hero-demo-corner-br" />
       </div>
       <div className="hero-demo-readouts" aria-label="Demo details">
-        <div><span>RECORDING</span><strong>08:04 WALKTHROUGH</strong></div>
+        <div><span>RECORDING</span><strong>11:11 WALKTHROUGH</strong></div>
         <div><span>PRODUCT</span><strong>WORKING CONSOLE</strong></div>
         <div><span>AUDIO</span><strong>ENABLED BY DEFAULT</strong></div>
       </div>
@@ -418,7 +436,7 @@ function DemoSection() {
         <Reveal className="demo-layout" delay={100}>
           <DemoVideo />
           <div className="demo-aside">
-            <div className="demo-aside-top"><StatusPill tone="green" icon="play">RUNNING APPLICATION</StatusPill><span className="mono">08:04 / FULL WALKTHROUGH</span></div>
+            <div className="demo-aside-top"><StatusPill tone="green" icon="play">RUNNING APPLICATION</StatusPill><span className="mono">11:11 / FULL WALKTHROUGH</span></div>
             <h3>Watch the evidence<br /><em>move through the loop.</em></h3>
             <div className="demo-chapters">
               {[

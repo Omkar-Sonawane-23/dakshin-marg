@@ -95,10 +95,10 @@ function corridorGeometry(
     const cur = ring[i];
     const prev = ring[Math.max(0, i - 1)].c;
     const next = ring[Math.min(ring.length - 1, i + 1)].c;
-    const tangent = next.clone().sub(prev).normalize();
-    if (tangent.lengthSq() < 1e-6) tangent.set(1, 0, 0);
-    let side = new THREE.Vector3().crossVectors(up, tangent).normalize();
-    if (side.lengthSq() < 1e-6) side.set(1, 0, 0);
+    const diff = next.clone().sub(prev);
+    const tangent = diff.lengthSq() > 1e-6 ? diff.normalize() : new THREE.Vector3(1, 0, 0);
+    const cross = new THREE.Vector3().crossVectors(up, tangent);
+    const side = cross.lengthSq() > 1e-6 ? cross.normalize() : new THREE.Vector3(0, 0, 1);
     for (let s = 0; s <= segments; s++) {
       const a = (s / segments) * Math.PI * 2;
       const p = cur.c.clone().add(side.clone().multiplyScalar(Math.cos(a) * cur.r))

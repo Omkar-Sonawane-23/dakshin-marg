@@ -60,8 +60,14 @@ float wave(vec2 p, float t) {
 
 void main() {
   // signed distance to the coastline, km (128/255 == coast)
-  float enc = texture2D(uDist, vUv).r;
+  float enc = 0.0;
+  if (vUv.x >= 0.0 && vUv.x <= 1.0 && vUv.y >= 0.0 && vUv.y <= 1.0) {
+    enc = texture2D(uDist, vUv).r;
+  }
   float dist = (enc * 255.0 - 128.0) / 127.0 * 500.0;
+  if (vUv.x < 0.0 || vUv.x > 1.0 || vUv.y < 0.0 || vUv.y > 1.0) {
+    dist = -500.0;
+  }
   float coastal = exp(-max(dist, 0.0) / 260.0);
 
   vec3 base = mix(uDeep, uShallow, clamp(coastal, 0.0, 1.0) * 0.85);
@@ -107,9 +113,10 @@ export class Ocean {
     geo.rotateX(-Math.PI / 2);
     const pos = geo.getAttribute('position') as THREE.BufferAttribute;
     const uv = new Float32Array(pos.count * 2);
+    const span = TERRAIN_RADIUS_KM;
     for (let i = 0; i < pos.count; i++) {
-      uv[i * 2] = (pos.getX(i) + r) / (2 * r);
-      uv[i * 2 + 1] = (pos.getZ(i) + r) / (2 * r);
+      uv[i * 2] = (pos.getX(i) + span) / (2 * span);
+      uv[i * 2 + 1] = (pos.getZ(i) + span) / (2 * span);
     }
     geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
 

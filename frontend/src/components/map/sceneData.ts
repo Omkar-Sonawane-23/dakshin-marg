@@ -299,7 +299,11 @@ export function buildSceneInput(d: MapDataDeps): SceneInput {
       { id: 'o', lon: env.optOrigin.lon, lat: env.optOrigin.lat, label: 'ORIGIN', kind: 'ORIGIN' },
       { id: 'd', lon: env.optDestination.lon, lat: env.optDestination.lat, label: 'DESTINATION', kind: 'DESTINATION' },
     );
-  } else if (scenario) {
+  } else if (live) {
+    endpoints.push(
+      { id: 'st-bharati', lon: 76.192, lat: -69.407, label: 'BHARATI STATION', kind: 'DESTINATION' },
+    );
+  } else if (!live && scenario) {
     endpoints.push(
       { id: 'o', lon: scenario.mission.origin.position.lon, lat: scenario.mission.origin.position.lat, label: 'ORIGIN', kind: 'ORIGIN' },
       { id: 'd', lon: scenario.mission.destination.position.lon, lat: scenario.mission.destination.position.lat, label: 'BHARATI APPROACH', kind: 'DESTINATION' },

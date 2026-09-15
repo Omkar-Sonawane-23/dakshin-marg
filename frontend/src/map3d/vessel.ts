@@ -42,11 +42,9 @@ function buildHull(): THREE.BufferGeometry {
   const pos: number[] = [];
   const idx: number[] = [];
   for (const p of v) pos.push(p[0], p[1], p[2]);
-  let vi = 0;
   for (const q of f) {
-    for (const t of [q[0], q[1], q[2]]) idx.push(vi + t);
-    for (const t of [q[0], q[2], q[3]]) idx.push(vi + t);
-    vi += 4;
+    for (const t of [q[0], q[1], q[2]]) idx.push(t);
+    for (const t of [q[0], q[2], q[3]]) idx.push(t);
   }
   // de-index for flat shading, duplicating per face
   const flatPos: number[] = [];

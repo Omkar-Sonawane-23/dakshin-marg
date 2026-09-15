@@ -275,6 +275,28 @@ export default function AntarcticMap() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [env.focusBergId]);
 
+  // ── re-frame when routes are generated or drill changes ──────────────
+  useEffect(() => {
+    if (!ready || !sceneRef.current) return;
+    if (deps.env.optRoutes && deps.env.optRoutes.length > 0) {
+      sceneRef.current.reset();
+    }
+  }, [ready, deps.env.optRoutes]);
+
+  useEffect(() => {
+    if (!ready || !sceneRef.current) return;
+    if (mission.mission?.routePlan?.data?.routes && mission.mission.routePlan.data.routes.length > 0) {
+      sceneRef.current.reset();
+    }
+  }, [ready, mission.mission?.routePlan]);
+
+  useEffect(() => {
+    if (!ready || !sceneRef.current) return;
+    if (deps.env.drill && deps.env.drill.stage >= 0) {
+      sceneRef.current.reset();
+    }
+  }, [ready, deps.env.drill?.stage]);
+
   // ── picking ───────────────────────────────────────────────────────────
   const onPick = useCallback((r: PickResult) => {
     // mission wizard point picking (unchanged contract)

@@ -1,819 +1,187 @@
 #!/usr/bin/env node
-
 /**
  * Dakshin Marg — one-click SIH demo video.
  *
- * IMPORTANT:
- *
- * The --interactive flag does NOT mean "wait for the user".
- *
- * It means:
- *
- *   SCRIPT
- *      ↓
- *   VISIBLE CHROMIUM
- *      ↓
- *   PLAYWRIGHT ACTIONS
- *      ↓
- *   REALISTIC CURSOR ANIMATION
- *      ↓
- *   FFMPEG DESKTOP RECORDING
- *
- * The narration remains the timing source.
- *
- * Usage:
- *
  *   node tools/demo-video/bin/make-demo.mjs
  *
- * Scripted visible recording:
- *
- *   node tools/demo-video/bin/make-demo.mjs --interactive
- *
- * Existing app:
- *
- *   node tools/demo-video/bin/make-demo.mjs \
- *     --interactive \
- *     --url=http://localhost:5173/
+ * Runs the whole chain: preflight → services → narration (TTS) → record → assemble.
+ * Every stage can be run alone with --only=<stage>, and nothing is downloaded
+ * silently: each resolver reports what it found.
  */
-
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-
 import {
-  FILES,
-  VIDEO,
-  WORK,
-  ensureDirs,
-  loadScript,
-  makeLogger,
+  FILES, VIDEO, WORK, ensureDirs, loadScript, makeLogger,
 } from '../src/config.mjs';
-
 import { preflight } from '../src/preflight.mjs';
-
-import {
-  startServices,
-  stopServices,
-  warmCaches,
-} from '../src/services.mjs';
-
+import { startServices, stopServices, warmCaches } from '../src/services.mjs';
 import { generateNarration } from '../src/tts.mjs';
-
 import { recordTake } from '../src/recorder.mjs';
-
-import {
-  assemble,
-  fmtTime,
-} from '../src/assemble.mjs';
-
-import {
-  recordScriptedBrowser,
-} from '../src/interactive-recorder.mjs';
-
+import { assemble, fmtTime } from '../src/assemble.mjs';
 
 const log = makeLogger();
 
+/* ── args ───────────────────────────────────────────────────────────────── */
 
-// ============================================================
-// Arguments
-// ============================================================
-
-const argv =
-  process.argv.slice(2);
-
-
-const value = (
-  name,
-  fallback = undefined,
-) => {
-
-  const hit =
-    argv.find(
-      (a) =>
-        a.startsWith(
-          `--${name}=`
-        )
-    );
-
-  return hit
-    ? hit.slice(
-        name.length + 3
-      )
-    : fallback;
+const argv = process.argv.slice(2);
+const value = (name, fallback = undefined) => {
+  const hit = argv.find((a) => a.startsWith(`--${name}=`));
+  return hit ? hit.slice(name.length + 3) : fallback;
 };
-
-
-const flag =
-  (name) =>
-    argv.includes(
-      `--${name}`
-    );
-
-
-const list =
-  (name) =>
-    value(name)
-      ? value(name)
-          .split(',')
-          .map(
-            (s) =>
-              s.trim()
-          )
-          .filter(Boolean)
-      : null;
-
-
-// ============================================================
-// Options
-// ============================================================
+const flag = (name) => argv.includes(`--${name}`);
+const list = (name) => (value(name) ? value(name).split(',').map((s) => s.trim()).filter(Boolean) : null);
 
 const OPTS = {
-
-  only:
-    list('only'),
-
-  skip:
-    list('skip') ?? [],
-
-  short:
-    flag('short'),
-
-  acts:
-    value('acts'),
-
-  tts:
-    value(
-      'tts',
-      'auto'
-    ),
-
-  voice:
-    value('voice'),
-
-  rate:
-    value('rate'),
-
-  frontend:
-    value(
-      'frontend',
-      'dev'
-    ),
-
-  url:
-    value('url'),
-
-  width:
-    Number(
-      value(
-        'width',
-        VIDEO.width
-      )
-    ),
-
-  height:
-    Number(
-      value(
-        'height',
-        VIDEO.height
-      )
-    ),
-
-  dry:
-    flag('dry'),
-
-  keepServices:
-    flag('keep-services'),
-
-  noShare:
-    flag('no-share'),
-
-  noInstall:
-    flag('no-install'),
-
-  forceNarration:
-    flag('force-narration'),
-
-  allowStale:
-    flag('allow-stale-narration'),
-
-  noWarm:
-    flag('no-warm'),
-
-  /**
-   * Scripted visible-browser recording.
-   */
-  interactive:
-    flag('interactive'),
-
-  help:
-    flag('help') ||
-    flag('h'),
-
+  only: list('only'),
+  skip: list('skip') ?? [],
+  short: flag('short'),
+  acts: value('acts'),
+  tts: value('tts', 'auto'),
+  voice: value('voice'),
+  rate: value('rate'),
+  frontend: value('frontend', 'dev'),
+  url: value('url'),
+  width: Number(value('width', VIDEO.width)),
+  height: Number(value('height', VIDEO.height)),
+  dry: flag('dry'),
+  keepServices: flag('keep-services'),
+  noShare: flag('no-share'),
+  noInstall: flag('no-install'),
+  forceNarration: flag('force-narration'),
+  allowStale: flag('allow-stale-narration'),
+  noWarm: flag('no-warm'),
+  help: flag('help') || flag('h'),
 };
 
-
-const STAGES = [
-  'preflight',
-  'narration',
-  'services',
-  'record',
-  'assemble',
-];
-
-
-// ============================================================
-// Help
-// ============================================================
+const STAGES = ['preflight', 'narration', 'services', 'record', 'assemble'];
 
 function usage() {
-
   console.log(`
-
 Dakshin Marg — SIH demo video generator
 
-Stages:
+  node tools/demo-video/bin/make-demo.mjs [options]
 
-  ${STAGES.join(' → ')}
+Stages (in order): ${STAGES.join(' → ')}
 
+Options
+  --only=<stage[,stage]>   run just these stages: ${STAGES.join('|')}
+  --skip=<stage[,stage]>   skip stages
+  --short                  core acts only (drops the tour + bridging beats)
+  --acts=<id|group,…>      run only these acts / groups (cards|tour|workflow)
+  --tts=<provider>         auto (default) | edge-tts | openai | elevenlabs | piper | sapi | espeak | cache
+  --voice=<name>           provider voice (e.g. en-IN-NeerjaNeural, nova, en-gb)
+  --rate=<±N%>             speech rate adjustment for providers that support it
+  --frontend=dev|preview   vite dev server :5173 (default) or production build :4173
+  --url=<url>              record an app that is already running (skips service management)
+  --width=N --height=N     recording size (default ${VIDEO.width}×${VIDEO.height})
+  --dry                    screenshots instead of video (fast rehearsal)
+  --no-warm                skip the off-camera warm-up (only if caches are already hot)
+  --no-share               do not render the 720p cut
+  --no-install             never install anything; fail if a tool is missing
+  --force-narration        re-synthesise every clip even if the text is unchanged
+  --allow-stale-narration  keep an old clip if a provider fails mid-run
+  --keep-services          leave the services running afterwards
 
-Normal automated recording:
+Output
+  ${FILES.master}
+  ${FILES.share}
+  ${FILES.narrationTrack}
+  ${FILES.subtitles}
 
-  node tools/demo-video/bin/make-demo.mjs
-
-
-Script-driven visible recording:
-
-  node tools/demo-video/bin/make-demo.mjs --interactive
-
-
-Options:
-
-  --interactive
-      Execute the complete demo script in a visible browser.
-      Cursor movement and clicks are shown and the desktop
-      is recorded with FFmpeg.
-
-  --only=<stage[,stage]>
-      Run only selected stages.
-
-  --skip=<stage[,stage]>
-      Skip selected stages.
-
-  --short
-      Core acts only.
-
-  --acts=<id|group,…>
-      Run selected acts/groups.
-
-  --tts=<provider>
-      auto | edge-tts | openai | elevenlabs |
-      piper | sapi | espeak | cache
-
-  --voice=<name>
-      TTS voice.
-
-  --rate=<±N%>
-      Speech rate.
-
-  --frontend=dev|preview
-      Vite dev server :5173
-      or production preview :4173.
-
-  --url=<url>
-      Use an already-running app.
-
-  --width=N
-  --height=N
-      Recording dimensions.
-
-  --dry
-      Screenshots instead of video.
-
-  --no-warm
-      Skip warm-up.
-
-  --no-share
-      Do not render 720p cut.
-
-  --no-install
-      Never install missing tools.
-
-  --force-narration
-      Re-synthesise narration.
-
-  --allow-stale-narration
-      Keep cached narration if provider fails.
-
-  --keep-services
-      Keep services running.
-
-Environment:
-
-  DM_FFMPEG=C:\\Users\\dell\\Downloads\\ffmpeg-master-latest-win64-gpl-shared\\ffmpeg-master-latest-win64-gpl-shared\\bin\\ffmpeg.exe
-  DM_CHROMIUM=C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe
-
+Environment overrides
+  DM_FFMPEG=/path/to/ffmpeg        DM_CHROMIUM=/path/to/chrome
+  OPENAI_API_KEY=…                 ELEVENLABS_API_KEY=…
+  DM_PIPER_MODEL=/path/voice.onnx  DM_PIPER_BIN=/path/to/piper
 `);
-
 }
 
+/* ── run ────────────────────────────────────────────────────────────────── */
 
-// ============================================================
-// Stage selection
-// ============================================================
-
-const want =
-  (stage) => {
-
-    if (OPTS.only) {
-
-      return OPTS.only.includes(
-        stage
-      );
-
-    }
-
-    return !OPTS.skip.includes(
-      stage
-    );
-
-  };
-
-
-// ============================================================
-// Main
-// ============================================================
+const want = (stage) => (OPTS.only ? OPTS.only.includes(stage) : !OPTS.skip.includes(stage));
 
 async function main() {
-
-  if (OPTS.help) {
-
-    usage();
-
-    return 0;
-
-  }
-
-
+  if (OPTS.help) { usage(); return 0; }
   ensureDirs();
 
+  const t0 = Date.now();
+  log.step(`Dakshin Marg demo video — ${OPTS.dry ? 'DRY RUN' : 'full render'}`);
+  log.info(`repo ${join(WORK, '..', '..', '..')} · stages ${OPTS.only ? OPTS.only.join(',') : STAGES.filter((s) => !OPTS.skip.includes(s)).join(',')}`);
 
-  const t0 =
-    Date.now();
+  const script = loadScript({ short: OPTS.short, acts: OPTS.acts });
+  const holdTotal = script.acts.reduce((a, b) => a + b.holdSeconds, 0);
+  log.info(`script: ${script.acts.length} act(s) · ${script.acts.map((a) => a.id).join(' ')}`);
+  log.info(`planned screen time ≈ ${fmtTime(holdTotal + (script.cards?.titleSeconds ?? 5) + (script.cards?.endSeconds ?? 8))} (plus any waiting on live computations)`);
 
-
-  log.step(
-    `Dakshin Marg demo video — ${
-      OPTS.dry
-        ? 'DRY RUN'
-        : OPTS.interactive
-          ? 'SCRIPTED VISIBLE RECORDING'
-          : 'FULL RENDER'
-    }`
-  );
-
-
-  // ==========================================================
-  // Load script
-  // ==========================================================
-
-  const script =
-    loadScript({
-      short:
-        OPTS.short,
-
-      acts:
-        OPTS.acts,
-    });
-
-
-  const holdTotal =
-    script.acts.reduce(
-      (total, act) =>
-        total +
-        act.holdSeconds,
-      0
-    );
-
-
-  log.info(
-    `script: ${
-      script.acts.length
-    } act(s) · ${
-      script.acts
-        .map(
-          (a) => a.id
-        )
-        .join(' ')
-    }`
-  );
-
-
-  log.info(
-    `planned screen time ≈ ${
-      fmtTime(
-        holdTotal +
-        (
-          script.cards
-            ?.titleSeconds ??
-          5
-        ) +
-        (
-          script.cards
-            ?.endSeconds ??
-          8
-        )
-      )}`
-  );
-
-
-  // ==========================================================
-  // 1. Preflight
-  // ==========================================================
-
-  const pf =
-    await preflight({
-      install:
-        !OPTS.noInstall,
-    });
-
-
+  /* 1 · preflight */
+  const pf = await preflight({ install: !OPTS.noInstall });
   if (!pf.report.ok) {
-
-    log.err(
-      'Fix the preflight errors above.'
-    );
-
+    log.err('fix the items above (or pass --no-install to see what a bare machine is missing), then re-run.');
     return 1;
-
   }
 
-
-  // ==========================================================
-  // 2. Narration
-  // ==========================================================
-
-  let narration =
-    null;
-
-
-  if (
-    want('narration')
-  ) {
-
-    narration =
-      await generateNarration(
-        script,
-        {
-
-          tts:
-            OPTS.tts,
-
-          voice:
-            OPTS.voice,
-
-          rate:
-            OPTS.rate,
-
-          force:
-            OPTS.forceNarration,
-
-          allowStale:
-            OPTS.allowStale,
-
-        }
-      );
-
+  /* 2 · narration (before recording: the recorder paces each act to its audio) */
+  let narration = null;
+  if (want('narration')) {
+    narration = await generateNarration(script, {
+      tts: OPTS.tts, voice: OPTS.voice, rate: OPTS.rate,
+      force: OPTS.forceNarration, allowStale: OPTS.allowStale,
+    });
   }
 
-
-  // ==========================================================
-  // 3. Services
-  // ==========================================================
-
-  let running =
-    null;
-
-
-  const url =
-    OPTS.url ??
-    `http://localhost:${
-      OPTS.frontend === 'preview'
-        ? 4173
-        : 5173
-    }/`;
-
-
-  if (
-    want('services') &&
-    !OPTS.url
-  ) {
-
-    running =
-      await startServices({
-        frontend:
-          OPTS.frontend,
-      });
-
-
-    if (!OPTS.noWarm) {
-
-      await warmCaches();
-
-    }
-
-  }
-  else if (
-    OPTS.url
-  ) {
-
-    log.info(
-      `using app already running at ${OPTS.url}`
-    );
-
+  /* 3 · services */
+  let running = null;
+  const url = OPTS.url ?? `http://localhost:${OPTS.frontend === 'preview' ? 4173 : 5173}/console`;
+  if (want('services') && !OPTS.url) {
+    running = await startServices({ frontend: OPTS.frontend });
+    await warmCaches();
+  } else if (OPTS.url) {
+    log.info(`using the app already running at ${OPTS.url}`);
   }
 
-
-  // ==========================================================
-  // Cleanup
-  // ==========================================================
-
-  const stop =
-    () => {
-
-      if (
-        running &&
-        !OPTS.keepServices
-      ) {
-
-        stopServices(
-          running.services
-        );
-
-      }
-      else if (
-        running
-      ) {
-
-        log.info(
-          'leaving services running (--keep-services)'
-        );
-
-      }
-
-    };
-
-
-  // ==========================================================
-  // RECORD
-  // ==========================================================
+  const stop = () => {
+    if (running && !OPTS.keepServices) stopServices(running.services);
+    else if (running) log.info('leaving services running (--keep-services)');
+  };
+  process.on('SIGINT', () => { log.warn('interrupted — stopping services'); stop(); process.exit(130); });
+  process.on('SIGTERM', () => { stop(); process.exit(143); });
 
   try {
-
-    if (
-      want('record')
-    ) {
-
-      // ======================================================
-      // SCRIPTED VISIBLE BROWSER
-      // ======================================================
-
-      if (
-        OPTS.interactive
-      ) {
-
-        await recordScriptedBrowser({
-
-          script,
-
-          narration,
-
-          url,
-
-          chromium:
-            pf.chromium,
-
-          width:
-            OPTS.width,
-
-          height:
-            OPTS.height,
-
-          dry:
-            OPTS.dry,
-
-        });
-
-      }
-
-
-      // ======================================================
-      // EXISTING AUTOMATED RECORDER
-      // ======================================================
-
-      else {
-
-        await recordTake({
-
-          script,
-
-          url,
-
-          chromium:
-            pf.chromium,
-
-          record:
-            !OPTS.dry,
-
-          stills:
-            !OPTS.dry,
-
-          width:
-            OPTS.width,
-
-          height:
-            OPTS.height,
-
-          warm:
-            !OPTS.noWarm,
-
-        });
-
-      }
-
+    /* 4 · record */
+    if (want('record')) {
+      await recordTake({
+        script, url, chromium: pf.chromium,
+        record: !OPTS.dry, stills: !OPTS.dry,
+        width: OPTS.width, height: OPTS.height,
+        warm: !OPTS.noWarm,
+      });
     }
 
-
-    // ========================================================
-    // Assemble normal automated take
-    // ========================================================
-
-    if (
-      want('assemble') &&
-      !OPTS.dry &&
-      !OPTS.interactive
-    ) {
-
-      if (
-        !existsSync(
-          FILES.timeline
-        )
-      ) {
-
-        throw new Error(
-          'nothing to assemble: run the record stage first'
-        );
-
-      }
-
-
-      const out =
-        await assemble({
-
-          script,
-
-          chromium:
-            pf.chromium,
-
-          share:
-            !OPTS.noShare,
-
-        });
-
-
-      log.step(
-        'Deliverables'
-      );
-
-
-      log.info(
-        `video     ${out.master}`
-      );
-
-
-      log.info(
-        `runtime   ${fmtTime(
-          out.totalDur
-        )}`
-      );
-
-
-      log.info(
-        `voice     ${
-          narration
-            ? narration.provider
-            : '(from an earlier stage)'
-        }${
-          narration?.voice
-            ? ` · ${narration.voice}`
-            : ''
-        }`
-      );
-
+    /* 5 · assemble */
+    if (want('assemble') && !OPTS.dry) {
+      if (!existsSync(FILES.timeline)) throw new Error('nothing to assemble: run the record stage first');
+      const out = await assemble({ script, chromium: pf.chromium, share: !OPTS.noShare });
+      log.step('Deliverables');
+      log.info(`video     ${out.master}`);
+      log.info(`runtime   ${fmtTime(out.totalDur)}`);
+      log.info(`voice     ${narration ? narration.provider : '(from an earlier stage)'}${narration?.voice ? ` · ${narration.voice}` : ''}`);
+      log.info(`next      commit docs/video/, or re-run with --short for the tight cut`);
+    } else if (OPTS.dry) {
+      log.step('Dry run complete');
+      log.info(`screenshots in ${join(WORK, 'shots')}`);
+      log.info('re-run without --dry to record and assemble the video');
     }
-
-
-    // ========================================================
-    // Interactive result
-    // ========================================================
-
-    if (
-      OPTS.interactive &&
-      !OPTS.dry
-    ) {
-
-      log.step(
-        'Scripted recording complete'
-      );
-
-      log.info(
-        'The recorded video follows the demo script.'
-      );
-
-      log.info(
-        'Narration timing was used to pace each act.'
-      );
-
-    }
-
-
-    // ========================================================
-    // Dry
-    // ========================================================
-
-    if (
-      OPTS.dry
-    ) {
-
-      log.step(
-        'Dry run complete'
-      );
-
-
-      log.info(
-        `screenshots in ${
-          join(
-            WORK,
-            'shots'
-          )
-        }`
-      );
-
-    }
-
-  }
-  finally {
-
+  } finally {
     stop();
-
   }
 
-
-  log.ok(
-    `finished in ${
-      fmtTime(
-        (Date.now() - t0) /
-        1000
-      )
-    }`
-  );
-
-
+  log.ok(`finished in ${fmtTime((Date.now() - t0) / 1000)}`);
   return 0;
-
 }
 
-
-// ============================================================
-// Execute
-// ============================================================
-
 main().then(
-
-  (code) =>
-    process.exit(
-      code ?? 0
-    ),
-
+  (code) => process.exit(code ?? 0),
   (err) => {
-
-    log.err(
-      String(
-        err?.stack ||
-        err?.message ||
-        err
-      )
-        .split('\n')
-        .slice(
-          0,
-          14
-        )
-        .join(
-          '\n        '
-        )
-    );
-
-
+    log.err(String(err?.stack || err?.message || err).split('\n').slice(0, 14).join('\n        '));
     process.exit(1);
-
-  }
-
+  },
 );

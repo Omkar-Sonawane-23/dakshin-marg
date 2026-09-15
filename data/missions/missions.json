@@ -3057,5 +3057,507 @@
     "message": "Candidate routes computed from -65.24°, 68.60° at 2026-08-26T20:53:00Z. Awaiting operator decision."
    }
   ]
+ },
+ {
+  "id": "M-2DB06457",
+  "name": "Bharati resupply — leg 2",
+  "state": "IN_PROGRESS",
+  "createdAt": "2026-09-14T20:26:19Z",
+  "updatedAt": "2026-09-14T20:28:13Z",
+  "vessel": {
+   "name": "MV Vasiliy Golovnin",
+   "type": "Research / resupply",
+   "iceClass": "PC5",
+   "cruiseSpeedKn": 12,
+   "maxSpeedKn": 0,
+   "maxAcceptableSeverity": "LOW",
+   "fuelModel": "NOT_AVAILABLE"
+  },
+  "origin": {
+   "lat": -57.5,
+   "lon": 60,
+   "label": "Southern Ocean staging"
+  },
+  "destination": {
+   "lat": -69.407,
+   "lon": 76.192,
+   "label": "Bharati"
+  },
+  "departureUtc": "2026-09-02T00:00Z",
+  "timeResolution": {
+   "status": "OK",
+   "requested": "2026-09-02T00:00:00Z",
+   "weatherHour": "2026-09-02T00:00",
+   "weatherKind": "OBSERVED_ARCHIVE",
+   "seaIceKind": "OBSERVATION",
+   "seaIceValidTime": "2026-09-01T12:00:00Z",
+   "seaIceDeltaH": 12,
+   "window": {
+    "start": "2026-08-25T00:00:00Z",
+    "end": "2026-09-04T12:00:00Z"
+   },
+   "seaIceDay": "20260901",
+   "horizonH": 0,
+   "notes": [
+    "Sea ice resolved to the nearest available daily observation (2026-09-01T12:00:00Z, 12 h before the requested time — daily product, 12:00 UTC valid time)."
+   ]
+  },
+  "routePlan": {
+   "data": {
+    "optimizer": {
+     "name": "severity-ceiling-astar",
+     "version": "0.1.0",
+     "method": "A* shortest path per profile; profiles are severity-ceiling exclusions on the risk surface — no weighted cost blending"
+    },
+    "request": {
+     "origin": {
+      "lon": 64.34942593536948,
+      "lat": -61.42471296768474
+     },
+     "destination": {
+      "lat": -69.407,
+      "lon": 76.192
+     },
+     "iceClass": "PC5",
+     "cruiseSpeedKn": 12,
+     "horizonH": 24
+    },
+    "riskSurface": {
+     "engine": {
+      "name": "polaris-overland-risk",
+      "version": "0.1.0"
+     },
+     "seaIce": {
+      "kind": "MODEL_FORECAST",
+      "validTime": "2026-09-02T12:00:00Z",
+      "inputProvenance": "REAL_OBSERVATION",
+      "model": "seaice-damped-trend v0.1.0"
+     },
+     "weatherHour": "2026-09-03T00:00"
+    },
+    "routes": [
+     {
+      "profile": "DIRECT",
+      "label": "Shortest feasible",
+      "severityCeiling": "HIGH",
+      "excludes": "CRITICAL cells only (POLARIS special consideration; berg core zones)",
+      "status": "OK",
+      "waypoints": [
+       {
+        "lat": -61.42471296768474,
+        "lon": 64.34942593536948
+       },
+       {
+        "lat": -63,
+        "lon": 64.5
+       },
+       {
+        "lat": -68.75,
+        "lon": 76
+       },
+       {
+        "lat": -69.407,
+        "lon": 76.192
+       }
+      ],
+      "distanceNm": 583,
+      "distanceKm": 1079,
+      "estTimeH": 48.6,
+      "timeModel": {
+       "cruiseSpeedKn": 12,
+       "elevatedSpeedKn": 5,
+       "elevatedSpeedSource": "POLARIS Table 1.2 (MSC.1/Circ.1519)",
+       "kmAtElevatedSpeed": 0
+      },
+      "fuelEstimate": null,
+      "fuelNote": "NOT COMPUTED — no validated fuel-consumption model for this vessel is available; an invented burn rate would violate the data-honesty rule.",
+      "notes": [],
+      "risk": {
+       "overallSeverity": "MEDIUM",
+       "worst": {
+        "severity": "HIGH",
+        "atKm": 1075,
+        "lat": -69.407,
+        "lon": 76.192,
+        "detail": "icing moderate (PPR 55)"
+       },
+       "exposurePct": {
+        "LOW": 97,
+        "MEDIUM": 3,
+        "HIGH": 0,
+        "CRITICAL": 0
+       },
+       "exposureByContributor": {
+        "seaIce": {
+         "LOW": 100,
+         "MEDIUM": 0,
+         "HIGH": 0,
+         "CRITICAL": 0
+        },
+        "icebergs": {
+         "LOW": 100,
+         "MEDIUM": 0,
+         "HIGH": 0,
+         "CRITICAL": 0
+        },
+        "icing": {
+         "LOW": 97,
+         "MEDIUM": 3,
+         "HIGH": 0,
+         "CRITICAL": 0
+        },
+        "combined": {
+         "LOW": 97,
+         "MEDIUM": 3,
+         "HIGH": 0,
+         "CRITICAL": 0
+        }
+       },
+       "bergEncounters": [],
+       "explanations": [
+        "Overall route severity MEDIUM: worst point at km 1075 of 1075 (-69.407°, 76.192°) — icing moderate (PPR 55).",
+        "Exposure (fraction of route length): LOW 97.0%, MEDIUM 3.0%.",
+        "Route crosses no charted iceberg hazard zone (USNIC bergs ≥10 nm only; smaller ice not charted).",
+        "1 samples fall outside sea-ice grid coverage (land-masked or off-AOI); ice risk not evaluated there."
+       ]
+      },
+      "recommended": false
+     },
+     {
+      "profile": "BALANCED",
+      "label": "Risk-aware",
+      "severityCeiling": "MEDIUM",
+      "excludes": "CRITICAL + HIGH cells (POLARIS elevated risk; berg P50 zones; moderate icing)",
+      "status": "OK",
+      "waypoints": [
+       {
+        "lat": -61.42471296768474,
+        "lon": 64.34942593536948
+       },
+       {
+        "lat": -63,
+        "lon": 64.5
+       },
+       {
+        "lat": -68.75,
+        "lon": 76
+       },
+       {
+        "lat": -69.407,
+        "lon": 76.192
+       }
+      ],
+      "distanceNm": 583,
+      "distanceKm": 1079,
+      "estTimeH": 48.6,
+      "timeModel": {
+       "cruiseSpeedKn": 12,
+       "elevatedSpeedKn": 5,
+       "elevatedSpeedSource": "POLARIS Table 1.2 (MSC.1/Circ.1519)",
+       "kmAtElevatedSpeed": 0
+      },
+      "fuelEstimate": null,
+      "fuelNote": "NOT COMPUTED — no validated fuel-consumption model for this vessel is available; an invented burn rate would violate the data-honesty rule.",
+      "notes": [],
+      "risk": {
+       "overallSeverity": "MEDIUM",
+       "worst": {
+        "severity": "HIGH",
+        "atKm": 1075,
+        "lat": -69.407,
+        "lon": 76.192,
+        "detail": "icing moderate (PPR 55)"
+       },
+       "exposurePct": {
+        "LOW": 97,
+        "MEDIUM": 3,
+        "HIGH": 0,
+        "CRITICAL": 0
+       },
+       "exposureByContributor": {
+        "seaIce": {
+         "LOW": 100,
+         "MEDIUM": 0,
+         "HIGH": 0,
+         "CRITICAL": 0
+        },
+        "icebergs": {
+         "LOW": 100,
+         "MEDIUM": 0,
+         "HIGH": 0,
+         "CRITICAL": 0
+        },
+        "icing": {
+         "LOW": 97,
+         "MEDIUM": 3,
+         "HIGH": 0,
+         "CRITICAL": 0
+        },
+        "combined": {
+         "LOW": 97,
+         "MEDIUM": 3,
+         "HIGH": 0,
+         "CRITICAL": 0
+        }
+       },
+       "bergEncounters": [],
+       "explanations": [
+        "Overall route severity MEDIUM: worst point at km 1075 of 1075 (-69.407°, 76.192°) — icing moderate (PPR 55).",
+        "Exposure (fraction of route length): LOW 97.0%, MEDIUM 3.0%.",
+        "Route crosses no charted iceberg hazard zone (USNIC bergs ≥10 nm only; smaller ice not charted).",
+        "1 samples fall outside sea-ice grid coverage (land-masked or off-AOI); ice risk not evaluated there."
+       ]
+      },
+      "recommended": false
+     },
+     {
+      "profile": "CONSERVATIVE",
+      "label": "Conservative",
+      "severityCeiling": "LOW",
+      "excludes": "everything above LOW (adds berg P90 zones; light icing)",
+      "status": "OK",
+      "waypoints": [
+       {
+        "lat": -61.42471296768474,
+        "lon": 64.34942593536948
+       },
+       {
+        "lat": -63,
+        "lon": 64.5
+       },
+       {
+        "lat": -68.75,
+        "lon": 76
+       },
+       {
+        "lat": -69.407,
+        "lon": 76.192
+       }
+      ],
+      "distanceNm": 581,
+      "distanceKm": 1077,
+      "estTimeH": 48.4,
+      "timeModel": {
+       "cruiseSpeedKn": 12,
+       "elevatedSpeedKn": 5,
+       "elevatedSpeedSource": "POLARIS Table 1.2 (MSC.1/Circ.1519)",
+       "kmAtElevatedSpeed": 0
+      },
+      "fuelEstimate": null,
+      "fuelNote": "NOT COMPUTED — no validated fuel-consumption model for this vessel is available; an invented burn rate would violate the data-honesty rule.",
+      "notes": [
+       "3.0% of route length exceeds the LOW ceiling: the requested origin/destination lie inside or near excluded cells (snapped 37 km / 19 km), so the first/last approach legs cross them. The corridor between snapped points respects the ceiling."
+      ],
+      "risk": {
+       "overallSeverity": "MEDIUM",
+       "worst": {
+        "severity": "HIGH",
+        "atKm": 1075,
+        "lat": -69.407,
+        "lon": 76.192,
+        "detail": "icing moderate (PPR 55)"
+       },
+       "exposurePct": {
+        "LOW": 97,
+        "MEDIUM": 3,
+        "HIGH": 0,
+        "CRITICAL": 0
+       },
+       "exposureByContributor": {
+        "seaIce": {
+         "LOW": 100,
+         "MEDIUM": 0,
+         "HIGH": 0,
+         "CRITICAL": 0
+        },
+        "icebergs": {
+         "LOW": 100,
+         "MEDIUM": 0,
+         "HIGH": 0,
+         "CRITICAL": 0
+        },
+        "icing": {
+         "LOW": 97,
+         "MEDIUM": 3,
+         "HIGH": 0,
+         "CRITICAL": 0
+        },
+        "combined": {
+         "LOW": 97,
+         "MEDIUM": 3,
+         "HIGH": 0,
+         "CRITICAL": 0
+        }
+       },
+       "bergEncounters": [],
+       "explanations": [
+        "Overall route severity MEDIUM: worst point at km 1075 of 1075 (-69.407°, 76.192°) — icing moderate (PPR 55).",
+        "Exposure (fraction of route length): LOW 97.0%, MEDIUM 3.0%.",
+        "Route crosses no charted iceberg hazard zone (USNIC bergs ≥10 nm only; smaller ice not charted).",
+        "1 samples fall outside sea-ice grid coverage (land-masked or off-AOI); ice risk not evaluated there."
+       ]
+      },
+      "recommended": true
+     }
+    ],
+    "recommendation": {
+     "profile": "CONSERVATIVE",
+     "reason": "CONSERVATIVE is the shortest-time route with zero HIGH/CRITICAL exposure. MSC.1/Circ.1519 §1.4.5: voyage planning should avoid areas with elevated-risk potential. It is 0.2 h faster than the next zero-exposure alternative (DIRECT). Versus DIRECT it adds -2 nm / -0.2 h but eliminates 0.0% of route length at HIGH/CRITICAL severity.",
+     "rule": "shortest time among routes with zero HIGH/CRITICAL exposure (IMO MSC.1/Circ.1519 §1.4.5); decision support only — the operator decides"
+    },
+    "assumptions": [
+     "Grid resolution 0.5°×0.25° (~14×28 km); routes follow cell centres and are simplified for display — not a nautical chart product.",
+     "Speeds: operator cruise speed in normal-operation cells; POLARIS Table 1.2 recommended limits in elevated-risk cells.",
+     "Fuel intentionally not estimated (no validated consumption model).",
+     "Severity surface inherits all declared risk-engine assumptions (ice type, Tw=Tf, ≥10 nm bergs only).",
+     "Ice type assumed MEDIUM_FY (NSIDC provides concentration only, not stage of development); sensitivity to ±1 type step reported.",
+     "Sea surface temperature unavailable → Tw = Tf in the Overland predictor (maximises PPR; conservative).",
+     "Sea-spray icing suppressed where ice concentration ≥ 70% (WMO close-pack boundary): consolidated pack damps the waves that generate spray.",
+     "Iceberg zone radii use drift-error quantiles validated only up to 7 days; older positions are floored at the 7-day quantile.",
+     "Only USNIC-charted bergs (≥10 nm) are represented; smaller bergs and growlers are NOT in any input dataset."
+    ],
+    "warnings": [
+     "Some berg positions are older than the longest validated drift horizon (7 d); their zone radii are floored at the P90 error at 7 d and may understate true position uncertainty."
+    ],
+    "executedAt": "2026-09-14T20:27:37Z"
+   },
+   "meta": {
+    "provenance": "MODEL_FORECAST",
+    "temporal": {
+     "horizonH": 24,
+     "seaIce": {
+      "kind": "MODEL_FORECAST",
+      "validTime": "2026-09-02T12:00:00Z",
+      "inputProvenance": "REAL_OBSERVATION",
+      "model": "seaice-damped-trend v0.1.0"
+     },
+     "weatherHour": "2026-09-03T00:00",
+     "timeResolution": {
+      "status": "OK",
+      "requested": "2026-09-03T00:00:00Z",
+      "weatherHour": "2026-09-03T00:00",
+      "weatherKind": "FORECAST",
+      "seaIceKind": "FORECAST",
+      "seaIceValidTime": "2026-09-02T12:00:00Z",
+      "seaIceDeltaH": 12,
+      "window": {
+       "start": "2026-08-25T00:00:00Z",
+       "end": "2026-09-04T12:00:00Z"
+      },
+      "seaIceDay": null,
+      "horizonH": 24,
+      "notes": [
+       "Sea ice resolved to the validated +24 h forecast (valid 2026-09-02T12:00:00Z, 12 h from the requested time). Forecasts exist only at +24/48/72 h from the latest observation (2026-09-01T12:00:00Z)."
+      ]
+     }
+    },
+    "source": {
+     "methodology": "docs/route-optimization.md",
+     "optimizer": {
+      "name": "severity-ceiling-astar",
+      "version": "0.1.0",
+      "method": "A* shortest path per profile; profiles are severity-ceiling exclusions on the risk surface — no weighted cost blending"
+     }
+    },
+    "quality": "ok",
+    "warnings": [
+     "Some berg positions are older than the longest validated drift horizon (7 d); their zone radii are floored at the P90 error at 7 d and may understate true position uncertainty."
+    ],
+    "servedAt": "2026-09-14T20:27:37Z"
+   }
+  },
+  "activeProfile": "CONSERVATIVE",
+  "simulation": {
+   "simTime": "2026-09-03T00:00:00Z",
+   "elapsedH": 24,
+   "distanceCoveredNm": 287.9,
+   "vesselPos": {
+    "lon": 64.34942593536948,
+    "lat": -61.42471296768474
+   },
+   "completed": false,
+   "legStartSimTime": "2026-09-03T00:00:00Z",
+   "legStartDistanceNm": 287.9
+  },
+  "events": [
+   {
+    "at": "2026-09-14T20:26:19Z",
+    "simTime": null,
+    "type": "MISSION_CREATED",
+    "message": "Mission \"Bharati resupply — leg 2\" created — MV Vasiliy Golovnin (PC5), departure 2026-09-02T00:00Z."
+   },
+   {
+    "at": "2026-09-14T20:26:19Z",
+    "simTime": null,
+    "type": "STATE_CHANGE",
+    "message": "Mission validated against data availability — state READY."
+   },
+   {
+    "at": "2026-09-14T20:26:21Z",
+    "simTime": "2026-09-02T00:00Z",
+    "type": "ROUTES_GENERATED",
+    "message": "3 feasible route option(s) generated for departure 2026-09-02T00:00Z; decision-support recommendation: DIRECT."
+   },
+   {
+    "at": "2026-09-14T20:26:40Z",
+    "simTime": null,
+    "type": "STATE_CHANGE",
+    "message": "ROUTES_GENERATED → IN_PROGRESS"
+   },
+   {
+    "at": "2026-09-14T20:26:40Z",
+    "simTime": "2026-09-02T00:00Z",
+    "type": "ROUTE_ACCEPTED",
+    "message": "Operator accepted DIRECT (872 nm, est 72.7 h). Voyage simulation armed at departure 2026-09-02T00:00Z."
+   },
+   {
+    "at": "2026-09-14T20:26:59Z",
+    "simTime": "2026-09-02T12:00:00Z",
+    "type": "ENV_UPDATE",
+    "message": "Sea-ice field now resolves to +24 h forecast (valid 2026-09-02T12:00Z)."
+   },
+   {
+    "at": "2026-09-14T20:27:09Z",
+    "simTime": "2026-09-02T12:00:00Z",
+    "type": "STATE_CHANGE",
+    "message": "IN_PROGRESS → ROUTE_REVIEW_REQUIRED"
+   },
+   {
+    "at": "2026-09-14T20:27:09Z",
+    "simTime": "2026-09-03T00:00:00Z",
+    "type": "RISK_ALERT",
+    "message": "ROUTE REVIEW REQUIRED — Remaining-route severity MEDIUM exceeds the vessel's declared maximum acceptable severity (LOW)."
+   },
+   {
+    "at": "2026-09-14T20:27:37Z",
+    "simTime": "2026-09-03T00:00:00Z",
+    "type": "REPLAN_GENERATED",
+    "message": "Alternative routes generated from vessel position -61.42°, 64.35° at mission time 2026-09-03T00:00:00Z. Operator review required — no route change applied automatically."
+   },
+   {
+    "at": "2026-09-14T20:27:37Z",
+    "simTime": "2026-09-03T00:00:00Z",
+    "type": "STATE_CHANGE",
+    "message": "ROUTE_REVIEW_REQUIRED → RE_PLANNING"
+   },
+   {
+    "at": "2026-09-14T20:27:37Z",
+    "simTime": "2026-09-03T00:00:00Z",
+    "type": "REPLAN_READY",
+    "message": "Candidate routes computed from -61.42°, 64.35° at 2026-09-03T00:00:00Z. Awaiting operator decision."
+   },
+   {
+    "at": "2026-09-14T20:27:52Z",
+    "simTime": "2026-09-03T00:00:00Z",
+    "type": "STATE_CHANGE",
+    "message": "RE_PLANNING → IN_PROGRESS"
+   },
+   {
+    "at": "2026-09-14T20:27:52Z",
+    "simTime": "2026-09-03T00:00:00Z",
+    "type": "ROUTE_CHANGED",
+    "message": "Operator accepted replacement route CONSERVATIVE from current position (581 nm remaining, est 48.4 h)."
+   }
+  ]
  }
 ]

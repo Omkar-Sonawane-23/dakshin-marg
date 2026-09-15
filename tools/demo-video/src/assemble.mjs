@@ -99,6 +99,8 @@ function buildSrt(placements) {
     }
   }
   writeFileSync(FILES.subtitles, lines.join('\n'));
+  const vtt = 'WEBVTT\n\n' + lines.join('\n').replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, '$1.$2');
+  writeFileSync(FILES.subtitles.replace(/\.srt$/, '.vtt'), vtt);
   return idx - 1;
 }
 

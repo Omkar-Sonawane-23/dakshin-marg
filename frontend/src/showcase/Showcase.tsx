@@ -143,7 +143,11 @@ function DemoVideo() {
   const startVideo = () => {
     setLoaded(true);
     window.setTimeout(() => {
-      void videoRef.current?.play().then(() => setPlaying(true)).catch(() => undefined);
+      const video = videoRef.current;
+      if (video) {
+        video.muted = false;
+        void video.play().then(() => setPlaying(true)).catch(() => undefined);
+      }
     }, 60);
   };
 
@@ -161,7 +165,15 @@ function DemoVideo() {
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           aria-label="Dakshin Marg system demonstration recording"
-        />
+        >
+          <track
+            kind="subtitles"
+            label="English"
+            srcLang="en"
+            src="/Dakshin-Marg-demo.vtt"
+            default
+          />
+        </video>
       ) : (
         <div className="demo-video-poster" style={{ backgroundImage: `url(${showcaseShots[0].src})` }}>
           <span className="demo-video-grid" />
@@ -231,6 +243,7 @@ function HeroDemoVideo() {
   const startVideo = () => {
     const video = videoRef.current;
     if (!video) return;
+    video.muted = false;
     void video.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
   };
 
@@ -238,7 +251,7 @@ function HeroDemoVideo() {
     <div className="hero-demo-shell" id="hero-demo-video" aria-label="Dakshin Marg system demonstration">
       <div className="hero-demo-topline">
         <span><i className="live-dot" /> SYSTEM DEMO / RUNNING APPLICATION</span>
-        <span className="mono">08:04 · AUTOPLAY PREVIEW / 720P</span>
+        <span className="mono">11:11 · AUTOPLAY PREVIEW / 720P</span>
       </div>
       <div className="hero-demo-canvas">
         <video
@@ -254,7 +267,15 @@ function HeroDemoVideo() {
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           aria-label="Dakshin Marg system demonstration recording"
-        />
+        >
+          <track
+            kind="subtitles"
+            label="English"
+            srcLang="en"
+            src="/Dakshin-Marg-demo.vtt"
+            default
+          />
+        </video>
         {!playing && (
           <button className="hero-demo-play" type="button" onClick={startVideo} aria-label="Play the Dakshin Marg demo recording">
             <span><Icon name="play" size={23} /></span>
@@ -266,7 +287,7 @@ function HeroDemoVideo() {
         <div className="hero-demo-corner hero-demo-corner-br" />
       </div>
       <div className="hero-demo-readouts" aria-label="Demo details">
-        <div><span>RECORDING</span><strong>08:04 WALKTHROUGH</strong></div>
+        <div><span>RECORDING</span><strong>11:11 WALKTHROUGH</strong></div>
         <div><span>PRODUCT</span><strong>WORKING CONSOLE</strong></div>
         <div><span>AUDIO</span><strong>USE PLAYER CONTROLS</strong></div>
       </div>
@@ -387,7 +408,7 @@ function DemoSection() {
         <Reveal className="demo-layout" delay={100}>
           <DemoVideo />
           <div className="demo-aside">
-            <div className="demo-aside-top"><StatusPill tone="green" icon="play">RUNNING APPLICATION</StatusPill><span className="mono">08:04 / FULL WALKTHROUGH</span></div>
+            <div className="demo-aside-top"><StatusPill tone="green" icon="play">RUNNING APPLICATION</StatusPill><span className="mono">11:11 / FULL WALKTHROUGH</span></div>
             <h3>Watch the evidence<br /><em>move through the loop.</em></h3>
             <div className="demo-chapters">
               {[

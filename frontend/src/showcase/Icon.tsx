@@ -3,6 +3,7 @@ export type IconName =
   | 'chevron'
   | 'close'
   | 'compass'
+  | 'document'
   | 'grid'
   | 'layers'
   | 'menu'
@@ -46,6 +47,8 @@ export default function Icon({ name, size = 18, strokeWidth = 1.5, className }: 
       return <svg {...common}><path d="M6 6l12 12M18 6 6 18" /></svg>;
     case 'compass':
       return <svg {...common}><circle cx="12" cy="12" r="8.5" /><path d="M14.8 9.2 13 13l-3.8 1.8L11 11z" /><path d="M12 3.5v1.8M12 18.7v1.8" /></svg>;
+    case 'document':
+      return <svg {...common}><path d="M6 3.5h7.5L19 9v11.5H6z" /><path d="M13.5 3.5V9H19" /><path d="M9 12.5h6M9 15.5h6" /></svg>;
     case 'grid':
       return <svg {...common}><rect x="4" y="4" width="6" height="6" rx="1" /><rect x="14" y="4" width="6" height="6" rx="1" /><rect x="4" y="14" width="6" height="6" rx="1" /><rect x="14" y="14" width="6" height="6" rx="1" /></svg>;
     case 'layers':
